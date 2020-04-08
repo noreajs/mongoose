@@ -13,7 +13,7 @@ export default (io: socketIo.Server): socketIo.Namespace => {
             const jwtCredentials = jwt.verify(accesstoken, `${process.env.JWT_SECRET_KEY}`) as IJWTData;
 
             // load user
-            const user = await User.findOne({ phoneNumber: jwtCredentials.sub });
+            const user = await User.findOne({ email: jwtCredentials.sub });
 
             // check if the user exits
             if (user) {

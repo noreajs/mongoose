@@ -6,7 +6,7 @@ export default interface IUser extends Document {
     username: string;
     admin: boolean;
     online: boolean;
-    socketId: string;
+    socketId: string | undefined;
     email: string,
     emailVerifiedAt?: Date;
     locale: string;

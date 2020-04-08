@@ -1,16 +1,13 @@
 import * as jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { serializeError } from 'serialize-error';
-import requestIp from 'request-ip';
 import { verify } from "unixcrypt"
 import ExpressRequest  from '../core/interfaces/express/ExpressRequest';
 import User from '../models/User';
 import userProvider from '../providers/user.provider';
 import { isFilled } from '../common/Utils';
 import HttpStatus from '../common/HttpStatus';
-import ipGeoApiProvider from '../providers/ip-geo-api.provider';
 import IJWTData from '../interfaces/IJWTData';
-import { DEVICE_UNIQUE_ID_HEADER } from '../interfaces/CONST';
 
 class AuthMiddleware {
     /**
@@ -30,9 +27,7 @@ class AuthMiddleware {
                 } else {
                     const jwtCredentials: IJWTData = jwt.verify(authorization[1], `${process.env.JWT_SECRET_KEY}`) as IJWTData;
 
-                    // check device unique id
-                    if (jwtCredentials.deviceUniqueId === req.get(DEVICE_UNIQUE_ID_HEADER)) {
-                        const user = await userProvider.loadFullUser({ phoneNumber: jwtCredentials.sub });
+                    const user = await userProvider.loadFullUser({ email: jwtCredentials.sub });
                         if (user) {
                             if (user.lockedAt) {
                                 return res.status(HttpStatus.Unauthorized).json({
@@ -52,46 +47,12 @@ class AuthMiddleware {
                                 message: `Unknown account?? Corrupted token! be careful sir... ooooooh yes be careful!`
                             });
                         }
-                    } else {
-                        return res.status(HttpStatus.Unauthorized).json({
-                            message: 'Whhhat?!!...Corrupted token?! Unknown device ID?! How do you get this token please?!! ... are you kidding?!  Be careful sir..... oooooooh yes be careful!!!'
-                        })
-                    }
                 }
             } catch (err) {
                 return res.status(HttpStatus.Unauthorized).send();
             }
         } else {
             return res.status(HttpStatus.Unauthorized).send();
-        }
-    }
-
-    /**
-     * Get country information from client 
-     * @param req request
-     * @param res response
-     * @param next next action callback
-     */
-    async clientIpCountryLookup(req: Request, res: Response, next: NextFunction) {
-        const ip = requestIp.getClientIp(req);
-        if (ip) {
-            const request = req as ExpressRequest;
-            const lookup = await ipGeoApiProvider.ipLookup(ip);
-            if (lookup) {
-                request.countryLookup = lookup;
-                return next();
-            } else {
-                return res.status(HttpStatus.ExpectationFailed).json({
-                    status: 400,
-                    message: 'Unable get client ip address.'
-                })
-            }
-
-        } else {
-            return res.status(HttpStatus.BadRequest).json({
-                status: 400,
-                message: 'Unable get client ip address.'
-            })
         }
     }
 
@@ -122,14 +83,14 @@ class AuthMiddleware {
      */
     async isSecretCodeAndUserMatch(req: Request, res: Response, next: NextFunction) {
         await User.findOne({
-            phoneNumber: req.body.phoneNumber,
+            email: req.body.email,
             $or: [
                 { deletedAt: { $exists: false } },
                 { deletedAt: { $eq: null } }
             ]
         }).then((user) => {
             if (user) {
-                if (verify(req.body.secretCode, user.secretCode)) {
+                if (verify(req.body.password, user.password)) {
                     return next();
                 } else {
                     return res.status(HttpStatus.BadRequest).json({
@@ -138,7 +99,7 @@ class AuthMiddleware {
                 }
             } else {
                 return res.status(HttpStatus.BadRequest).json({
-                    message: `No account associated with the phone number ${req.body.phoneNumber}`
+                    message: `No account associated with the email ${req.body.email}`
                 });
             }
         }).catch((error) => {
@@ -157,19 +118,19 @@ class AuthMiddleware {
      * @param res response
      * @param next request chain
      */
-    async secretCodeRequired(req: Request, res: Response, next: NextFunction) {
+    async passwordRequired(req: Request, res: Response, next: NextFunction) {
         const request = req as ExpressRequest;
         // load user
         const user = request.user;
 
         // secret code required
-        if (!isFilled(req.body.secretCode)) {
+        if (!isFilled(req.body.password)) {
             return res.status(HttpStatus.BadRequest).json({
                 message: "The secret code is required for this request."
             });
         }
         // check the user secret code
-        else if (verify(req.body.secretCode, user.secretCode)) {
+        else if (verify(req.body.password, user.password)) {
             return next();
         } else {
             return res.status(HttpStatus.Forbidden).json({
@@ -179,36 +140,19 @@ class AuthMiddleware {
     }
 
     /**
-     * Check if the current user has a verified phone number
+     * Check if the current user has a verified email
      * @param req request
      * @param res response
      * @param next request chain
      */
-    async phoneNumberVerified(req: Request, res: Response, next: NextFunction) {
+    async emailVerified(req: Request, res: Response, next: NextFunction) {
         const request = req as ExpressRequest;
-        if (!request.user.phoneNumberVerification || request.user.phoneNumberVerification.status !== "approved") {
+        if (!request.user.emailVerifiedAt) {
             return res.status(403).json({
-                message: 'Verify your phone number before performing this action.'
+                message: 'Verify your email before performing this action.'
             })
         } else {
             return next()
-        }
-    }
-
-    /**
-     * Check if device unique id header is provided
-     * @param req request
-     * @param res response
-     * @param next request chain
-     */
-    async deviceUniqueIdRequired(req: Request, res: Response, next: NextFunction) {
-        // checking device unique id header
-        if (req.get(DEVICE_UNIQUE_ID_HEADER)) {
-            return next();
-        } else {
-            return res.status(403).json({
-                message: 'Device unique ID header param is required.'
-            })
         }
     }
 }
