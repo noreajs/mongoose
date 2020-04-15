@@ -16,7 +16,7 @@
   "author": "OvniCode Team",
   "license": "ISC",
   "dependencies": {
-    "@noreajs/core": "^1.0.10-0",
+    "@noreajs/core": "^1.0.10-1",
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.2",
     "@types/express-useragent": "^1.0.0",

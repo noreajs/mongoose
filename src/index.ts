@@ -21,9 +21,9 @@ const app = new NoreaApp(apiRoutes, {
         // Get MongoDB Instance
         MongodbContext.init();
     },
-    afterStart: (app, server) => {
+    afterStart: (app, server, port) => {
         console.log(`Environement : ${process.env.NODE_ENV || 'local'}`);
-        console.log('Express server listening on port ');
+        console.log('Express server listening on port ' + port);
 
         // initialize socket io on the server
         const io: socketIo.Server = socketIo(server);
