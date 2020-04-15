@@ -1,9 +1,10 @@
 import { Request, Response, Application } from "express";
 import authRoutes from "./auth.routes";
 import userRoutes from "./user.routes";
+import { NoreaAppRoutes } from "@noreajs/core";
 
-class ApiRoutes {
-    public routes(app: Application): void {
+export default new NoreaAppRoutes({
+    routes(app: Application): void {
         /**
          * Api home
          */
@@ -27,11 +28,8 @@ class ApiRoutes {
          * Users routes
          */
         userRoutes(app);
+    },
+    middlewares(app: Application): void {
+
     }
-
-    public middlewares(app: Application): void {
-
-    }
-}
-
-export default new ApiRoutes()
+})
