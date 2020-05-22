@@ -121,7 +121,7 @@ While using *linearizeErrors* method, the error data become:
 ```
 
 Example:
-````typescript
+```typescript
 try {
     const task = new Task({
         name: 'Install it',
@@ -135,7 +135,7 @@ try {
 
     // or
     // linearizeErrors(e, {debug: true}); // to keep the original 'errors' attribute
-    
+
     // return the response
     return res.status(500).json(e);
 }
