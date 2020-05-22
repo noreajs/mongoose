@@ -3,7 +3,7 @@ type ILinearizeErrorsParams = {
   };
   
   /**
-   *
+   * Linearize mongoose errors in a single line.
    * @param data execption data
    */
   export const linearizeErrors = (
