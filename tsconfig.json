@@ -1,5 +1,5 @@
 {
-    "include": ["src/**/*"],
+    "include": ["lib/**/*"],
     "compilerOptions": {
         "outDir": "dist",
         "target": "ES6",
