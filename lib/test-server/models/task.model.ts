@@ -1,5 +1,5 @@
-import mongooseModel from "../../core/MongooseModel";
 import { Document, Schema } from "mongoose";
+import mongooseModel from "../../core/MongooseModel";
 
 interface ITask extends Document {
   name: string;
