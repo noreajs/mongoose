@@ -3,6 +3,9 @@
   "version": "0.0.3",
   "description": "Mongoose helpers",
   "main": "dist/index.js",
+  "files": [
+    "/dist/core"
+  ],
   "scripts": {
     "start": "tsc && node dist/run.js",
     "test": "echo \"No test specified\""
@@ -28,8 +31,7 @@
     "mongoose-autopopulate": "^0.12.2",
     "mongoose-lean-virtuals": "^0.6.2",
     "mongoose-paginate": "^5.0.3",
-    "mongoose-unique-validator": "^2.0.3",
-    "validator": "^12.2.0"
+    "mongoose-unique-validator": "^2.0.3"
   },
   "devDependencies": {
     "@noreajs/core": "^1.1.0-1",
