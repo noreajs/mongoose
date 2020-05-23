@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, connection } from "mongoose";
 import mongoosePaginate from "mongoose-paginate";
 import mongooseAutopopulate from "mongoose-autopopulate";
 import mongooseLeanVirtuals from "mongoose-lean-virtuals";
@@ -97,17 +97,17 @@ export type MoongooseModelParams<T extends Document> = {
 
   /**
    * Unique validator message
-   * 
+   *
    * You can pass through a custom error message as part of the optional options argument:
-   * 
+   *
    * You have access to all of the standard Mongoose error message templating:
-   * 
+   *
    * {PATH}
    * {VALUE}
    * {TYPE}
-   * 
+   *
    * @default "Expected {PATH} to be unique."
-   * 
+   *
    * https://www.npmjs.com/package/mongoose-unique-validator
    */
   uniqueValidatorMessage?: string;
@@ -122,6 +122,23 @@ export type MoongooseModelParams<T extends Document> = {
    * Mongoose schema defining the model
    */
   schema: Schema<T>;
+
+  /**
+   * Makes the indexes in MongoDB match the indexes defined in this model's schema. This function will drop any indexes that are not defined in the model's schema except the _id index, and build any indexes that are in your schema but not in MongoDB.
+   *
+   * @default true
+   */
+  syncIndexes?: boolean;
+
+  /**
+   * syncIndexes options to pass to ensureIndexes()
+   */
+  syncIndexesOptions?: object | null | undefined;
+
+  /**
+   * syncIndexes optional callback
+   */
+  syncIndexesCallback?: (err: any) => void;
 
   /**
    * Configure the schema created by adding methods, middlewares, virtuals and many other things provided by Mongoose
@@ -165,57 +182,70 @@ export type MoongooseModelParams<T extends Document> = {
 export default function mongooseModel<T extends Document>(
   params: MoongooseModelParams<T>
 ) {
+  // the schema
+  const schema = params.schema;
+
   // apply external config
   if (params.externalConfig) {
-    params.externalConfig(params.schema);
+    params.externalConfig(schema);
   }
   // apply plugins
   if (params.plugins) {
-    params.plugins(params.schema);
+    params.plugins(schema);
   }
 
   /**
    * Default paginate
    */
   if (params.paginate !== false) {
-    params.schema.plugin(mongoosePaginate);
+    schema.plugin(mongoosePaginate);
   }
 
   /**
    * Aggregate query paginated
    */
   if (params.aggregatePaginate !== false) {
-    params.schema.plugin(mongooseAggregatePaginate);
+    schema.plugin(mongooseAggregatePaginate);
   }
 
   /**
    * Autopopulate
    */
   if (params.autopopulate == true) {
-    params.schema.plugin(mongooseAutopopulate);
+    schema.plugin(mongooseAutopopulate);
   }
 
   /**
    * Lean virtuals
    */
   if (params.leanVirtuals !== false) {
-    params.schema.plugin(mongooseLeanVirtuals);
+    schema.plugin(mongooseLeanVirtuals);
   }
 
   /**
    * Unique validator
    */
   if (params.uniqueValidator !== false) {
-    params.schema.plugin(mongooseUniqueValidator, {
+    schema.plugin(mongooseUniqueValidator, {
       message: params.uniqueValidatorMessage || "Expected {PATH} to be unique.",
     });
   }
 
+  // create model
+  const m = model<T>(params.name, schema, params.collection, params.skipInit);
+
+  // listen to mongoose db connection
+  connection.on("open", (err) => {
+    // synchronize index
+    if (params.syncIndexes !== false) {
+      if (params.syncIndexesCallback) {
+        m.syncIndexes(params.syncIndexesOptions, params.syncIndexesCallback);
+      } else {
+        m.syncIndexes(params.syncIndexesOptions);
+      }
+    }
+  });
+
   // return the model
-  return model<T>(
-    params.name,
-    params.schema,
-    params.collection,
-    params.skipInit
-  );
+  return m;
 }

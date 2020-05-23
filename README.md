@@ -96,7 +96,7 @@ MoongooseModelParams<T> descriptions:
 ### Extraction of errors during validations
 Linearize Mongoose errors when you catch them. The method used is **linearizeErrors**.
 
-Mongoose validation errors normaly look like this:
+Mongoose validation errors normaly looks like this:
 ```json
 {
     "message": "Validation Error: First error, second error and many other (maybe) unnecessary",
