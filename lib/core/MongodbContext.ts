@@ -32,7 +32,7 @@ class MongoDBContext {
    * 
    * @param params Mongodb context params
    */
-  async init(params: MongoDBContextParams): Promise<void> {
+  static async init(params: MongoDBContextParams): Promise<void> {
     // listen connection
     const db = connection;
 
@@ -72,4 +72,4 @@ class MongoDBContext {
   }
 }
 
-export default new MongoDBContext();
+export default MongoDBContext;
