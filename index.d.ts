@@ -208,7 +208,7 @@ export class MongoDBContext {
    *
    * @param params Mongodb context params
    */
-  init(params: MongoDBContextParams): Promise<void>;
+  static init(params: MongoDBContextParams): Promise<void>;
 }
 
 export type MongoDBContextParams = {
