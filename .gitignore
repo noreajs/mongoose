@@ -3,4 +3,7 @@
 npm-debug.log
 .DS_Store
 .env.local
+.env
+.env.development
+.env.production
 .npmrc

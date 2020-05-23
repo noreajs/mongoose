@@ -5,9 +5,28 @@ NoreaJs Mongoose is a package which contains a set of tools intended to facilita
 
 # Initial Features
 
+- MongoDB initialization
 - Model creation
 - Extraction of errors during validations
 
+### MongoDB initialization
+
+To use MongoDB in your application, initialization is required. To do so with this little baby package, here's how:
+
+Import the MongoDB context:
+```typescript
+import { MongodbContext } from '@noreajs/mongoose';
+```
+
+Then use this line of code to initialize:
+```typescript
+MongodbContext.init({
+  connectionUrl: `MONGODB_CONNECTION_URL`,
+  options: {}, // optional
+  onConnect: () => {}, // optional
+  onError: () => {} // optional
+});
+```
 
 ### Model creation
 

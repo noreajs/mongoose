@@ -1,11 +1,26 @@
 import { ConnectionOptions, connection, connect, Connection } from "mongoose";
 
 export type MongoContextParams = {
+  /**
+   * MongoDB connection URL
+   */
   connectionUrl: string;
+
+  /**
+   * MongoDB connection options
+   */
   options?: ConnectionOptions;
-  afterConnect?:
+
+  /**
+   * Method to be executed when the connection to MongoDB has been etablished
+   */
+  onConnect?:
     | ((connection: Connection) => Promise<void>)
     | ((connection: Connection) => void);
+
+  /**
+   * Method to be executed when an error occur during MongoDB connection
+   */
   onError?:
     | ((connection: Connection) => Promise<void>)
     | ((connection: Connection) => void);
@@ -37,8 +52,8 @@ class MongoContext {
       console.log("We're connected on MongoDB!!");
 
       // after connection
-      if (params.afterConnect) {
-        await params.afterConnect(db);
+      if (params.onConnect) {
+        await params.onConnect(db);
       }
     });
 
