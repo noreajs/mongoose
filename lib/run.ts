@@ -1,6 +1,6 @@
 import { NoreaApp } from "@noreajs/core";
 import apiRoutes from "./api.routes";
-import MongodbContext from "./core/MongodbContext";
+import MongodbContext from "./core/MongoDBContext";
 
 /**
  * Create a new NoreaJs App

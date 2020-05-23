@@ -1,6 +1,6 @@
 import { ConnectionOptions, connection, connect, Connection } from "mongoose";
 
-export type MongoContextParams = {
+export type MongoDBContextParams = {
   /**
    * MongoDB connection URL
    */
@@ -26,11 +26,13 @@ export type MongoContextParams = {
     | ((connection: Connection) => void);
 };
 
-class MongoContext {
+class MongoDBContext {
   /**
    * Initialize mongodb connection
+   * 
+   * @param params Mongodb context params
    */
-  async init(params: MongoContextParams): Promise<void> {
+  async init(params: MongoDBContextParams): Promise<void> {
     // listen connection
     const db = connection;
 
@@ -70,4 +72,4 @@ class MongoContext {
   }
 }
 
-export default new MongoContext();
+export default new MongoDBContext();
