@@ -2,7 +2,13 @@
 // Project: Norea.Js
 // Definitions by: Arnold LAMBOU <https://github.com/lambou>
 
-import { ConnectionOptions, Connection, Schema } from "mongoose";
+import {
+  ConnectionOptions,
+  Connection,
+  Schema,
+  PaginateModel,
+  Document,
+} from "mongoose";
 
 export * from "mongoose";
 
@@ -14,7 +20,10 @@ export type ILinearizeErrorsParams = {
  * Linearize mongoose errors in a single line.
  * @param data execption data
  */
-export function linearizeErrors(data: any, params?: ILinearizeErrorsParams);
+export const linearizeErrors: (
+  data: any,
+  params?: ILinearizeErrorsParams
+) => void;
 
 export type MoongooseModelParams<T extends Document> = {
   /**
@@ -191,7 +200,7 @@ export type MoongooseModelParams<T extends Document> = {
  */
 export function mongooseModel<T extends Document>(
   params: MoongooseModelParams<T>
-)
+): PaginateModel<T>;
 
 export class MongoDBContext {
   /**
