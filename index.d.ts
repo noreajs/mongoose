@@ -1,3 +1,7 @@
+// Type definitions for @noreajs/mongoose
+// Project: Norea.Js
+// Definitions by: Arnold LAMBOU <https://github.com/lambou>
+
 export * from "mongoose";
 export {
   linearizeErrors,

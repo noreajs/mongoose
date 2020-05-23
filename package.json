@@ -4,7 +4,8 @@
   "description": "Mongoose helpers",
   "main": "dist/index.js",
   "files": [
-    "/dist/core"
+    "/dist/core",
+    "index.d.ts"
   ],
   "scripts": {
     "start": "tsc && node dist/run.js",
