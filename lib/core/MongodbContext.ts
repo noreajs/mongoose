@@ -1,6 +1,6 @@
 import { ConnectionOptions, connection, connect, Connection } from "mongoose";
 
-type MongoContextParams = {
+export type MongoContextParams = {
   connectionUrl: string;
   options?: ConnectionOptions;
   afterConnect?:
