@@ -26,10 +26,11 @@ export type MongoDBContextParams = {
     | ((connection: Connection) => void);
 };
 
-export class MongoDBContext {
+class MongoDBContext {
+  constructor() {}
   /**
    * Initialize mongodb connection
-   * 
+   *
    * @param params Mongodb context params
    */
   static async init(params: MongoDBContextParams): Promise<void> {
@@ -71,3 +72,5 @@ export class MongoDBContext {
     );
   }
 }
+
+export default MongoDBContext;

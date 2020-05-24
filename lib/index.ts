@@ -2,9 +2,9 @@ export * from "mongoose";
 export {
   linearizeErrors,
   ILinearizeErrorsParams,
-} from "./lib/core/MongooseUtilities";
+} from "./core/MongooseUtilities";
 export {
   default as mongooseModel,
   MoongooseModelParams,
-} from "./lib/core/MongooseModel";
-export { MongoDBContext } from "./lib/core/MongoDBContext";
+} from "./core/MongooseModel";
+export { default as MongoDBContext } from "./core/MongoDBContext";
