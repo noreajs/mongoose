@@ -1,6 +1,6 @@
 {
   "name": "@noreajs/mongoose",
-  "version": "0.0.9-0",
+  "version": "0.0.9-1",
   "description": "Mongoose helpers",
   "main": "dist/index.js",
   "files": [
