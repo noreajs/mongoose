@@ -192,6 +192,13 @@ export type MoongooseModelParams<T extends Document> = {
    * ```
    */
   externalConfig?: (schema: Schema) => void;
+
+  /**
+   * Define virtuals field
+   */
+  virtuals?: [
+    { fieldName: string; options?: any; get: Function; set?: Function }
+  ];
 };
 
 /**
