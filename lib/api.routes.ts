@@ -19,9 +19,24 @@ export default new NoreaAppRoutes({
     });
 
     app.get("/tasks", async (request: Request, response: Response) => {
-      const r = await taskModel.paginate({});
+      const r = await taskModel.paginate();
       response.send(r);
     });
+
+    app.route("/tasks").post([
+      async (request: Request, response: Response) => {
+        try {
+          const r = new taskModel({
+            name: "name",
+          });
+          await r.save();
+          response.send(r);
+        } catch (error) {
+          console.log(error);
+          response.status(500).json(error);
+        }
+      },
+    ]);
   },
   middlewares(app: Application): void {},
 });

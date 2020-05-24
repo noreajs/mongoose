@@ -173,6 +173,14 @@ export type MoongooseModelParams<T extends Document> = {
    * ```
    */
   externalConfig?: (schema: Schema) => void;
+
+
+  /**
+   * Define virtuals field
+   */
+  virtuals?: [
+    { fieldName: string; options?: any; get: Function; set?: Function }
+  ];
 };
 
 /**
@@ -184,6 +192,18 @@ export default function mongooseModel<T extends Document>(
 ) {
   // the schema
   const schema = params.schema;
+
+  /**
+   * Virtuals fields
+   */
+  if (params.virtuals) {
+    for (const v of params.virtuals) {
+      const field = schema.virtual(v.fieldName, v.options).get(v.get);
+      if (v.set) {
+        field.set(v.set);
+      }
+    }
+  }
 
   // apply external config
   if (params.externalConfig) {
@@ -211,7 +231,7 @@ export default function mongooseModel<T extends Document>(
   /**
    * Autopopulate
    */
-  if (params.autopopulate == true) {
+  if (params.autopopulate !== false) {
     schema.plugin(mongooseAutopopulate);
   }
 

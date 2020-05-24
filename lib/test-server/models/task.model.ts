@@ -4,6 +4,7 @@ import mongooseModel from "../../core/MongooseModel";
 interface ITask extends Document {
   name: string;
   description?: string;
+  doubleName: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,11 +26,15 @@ export default mongooseModel<ITask>({
       timestamps: true,
     }
   ),
-  autopopulate: true,
-  paginate: true,
-  aggregatePaginate: true,
-  leanVirtuals: true,
-  uniqueValidator: true,
+  virtuals: [
+    {
+      fieldName: "doubleName",
+      get: function () {
+        const s = this as any;
+        return s.name + " " + s.name;
+      },
+    },
+  ],
   plugins: (schema: Schema<any>) => {},
   externalConfig: (schema: Schema<any>) => {},
 });
