@@ -7,4 +7,4 @@ export {
   default as mongooseModel,
   MoongooseModelParams,
 } from "./lib/core/MongooseModel";
-export { default as MongoDBContext } from "./lib/core/MongoDBContext";
+export { MongoDBContext } from "./lib/core/MongoDBContext";

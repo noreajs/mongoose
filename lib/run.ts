@@ -1,6 +1,6 @@
 import { NoreaApp } from "@noreajs/core";
 import apiRoutes from "./api.routes";
-import MongodbContext from "./core/MongoDBContext";
+import { MongoDBContext } from "./core/MongoDBContext";
 
 /**
  * Create a new NoreaJs App
@@ -9,7 +9,7 @@ const app = new NoreaApp(apiRoutes, {
   forceHttps: false,
   beforeStart: (app) => {
     // Get MongoDB Instance
-    MongodbContext.init({
+    MongoDBContext.init({
       connectionUrl: `mongodb://127.0.0.1:27017/noreajs_mongoose_db?compressors=zlib`,
     });
   },

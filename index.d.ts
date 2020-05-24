@@ -202,7 +202,7 @@ export function mongooseModel<T extends Document>(
   params: MoongooseModelParams<T>
 ): PaginateModel<T>;
 
-export class MongoDBContext {
+declare class MongoDBContext {
   /**
    * Initialize mongodb connection
    *

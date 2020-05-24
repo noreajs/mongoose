@@ -26,7 +26,7 @@ export type MongoDBContextParams = {
     | ((connection: Connection) => void);
 };
 
-export default class MongoDBContext {
+export class MongoDBContext {
   /**
    * Initialize mongodb connection
    * 
