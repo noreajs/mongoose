@@ -2,13 +2,13 @@
   "name": "@noreajs/mongoose",
   "version": "0.0.12",
   "description": "Mongoose helpers",
-  "main": "dist/index.js",
+  "main": "dist/lib/index.js",
   "files": [
     "/dist/core",
     "/index.d.ts"
   ],
   "scripts": {
-    "start": "tsc && node dist/run.js",
+    "start": "tsc && node dist/test-server/run.js",
     "test": "echo \"No test specified\""
   },
   "repository": {
