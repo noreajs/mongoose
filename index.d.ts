@@ -166,16 +166,16 @@ export type MoongooseModelParams<T extends Document> = {
    * Virtuals - https://mongoosejs.com/docs/guide.html#virtuals
    *
    * ```
-   * externalConfig: (schema) => {
+   * externalConfig: function (schema:Schema, model:PaginateModel<T>) {
    *     // Method example
    *     schema.methods = {
-   *       verifyPassword: (value: string) => {
+   *       verifyPassword: function (value: string) {
    *         // your code here
    *       },
    *     };
    *
    *     // Middleware example
-   *     schema.pre("save", () => {
+   *     schema.pre("save", function () {
    *       // thing to do before save the object
    *     });
    *
@@ -191,14 +191,30 @@ export type MoongooseModelParams<T extends Document> = {
    *   }
    * ```
    */
-  externalConfig?: (schema: Schema) => void;
+  externalConfig?: (schema: Schema, model: PaginateModel<T>) => void;
 
   /**
    * Define virtuals field
+   * 
+   * @description For more flexibility define your virtuals in externalConfig method
    */
   virtuals?: [
-    { fieldName: string; options?: any; get: Function; set?: Function }
+    {
+      fieldName: string;
+      options?: any;
+      get: (this: T) => any | Promise<any>;
+      set?: (this: T) => void | Promise<void>;
+    }
   ];
+
+  /**
+   * Define model methods
+   * 
+   * @description For more flexibility define your virtuals in externalConfig method
+   */
+  methods?: {
+    [K in keyof Partial<T>]:(this: T,...rest:any[]) => any | Promise<any>
+  }
 };
 
 /**
@@ -211,7 +227,7 @@ export function mongooseModel<T extends Document>(
 
 export class MongoDBContext {
   /**
-   * 
+   *
    * Initialize mongodb connection
    *
    * @param params Mongodb context params

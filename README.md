@@ -32,7 +32,7 @@ MongodbContext.init({
 
 Mongoose is the ideal tool when working with MongoDB. Very often to create a model, there is a set of information to take into account and the organization of the different elements constituting a model can become complicated. This package offers you a relatively simple way to proceed to create a model.
 
-Full example of model declaration:
+Full example of model declaration: Task.ts file (or Task.js):
 ```typescript
 import { mongooseModel, Document, Schema } from "@noreajs/mongoose";
 
@@ -60,22 +60,15 @@ export default mongooseModel<ITask>({
       timestamps: true, // createdAt and UpdatedAt are created and managed by mongoose
     }
   ),
-  autopopulate: true, // optional, default true
-  paginate: true, // optional, default true
-  aggregatePaginate: true, // optional, default true
-  leanVirtuals: true, // optional, default true
-  uniqueValidator: true,  // optional, default true
-  plugins: (schema: Schema<any>) => {
-      // add your mongoose plugin here
-  },
-  externalConfig: (schema: Schema<any>) => {
-      // Define methods, virtuals and middlewares here
-  },
+  // + other properties
 });
 
 ```
 
-The generic method used is **mongooseModel<T>**.
+After creating the model, you can import it anywhere and use it.
+
+#### Some details
+The generic method used is **mongooseModel<T>**, Where T is the interface which describes the model, and which must extend the mongoose **Document** interface.
 
 The parameter of method mongooseModel is of the generic type **MoongooseModelParams<T>**;
 ```typescript

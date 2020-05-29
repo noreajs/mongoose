@@ -19,7 +19,8 @@ export default new NoreaAppRoutes({
     });
 
     app.get("/tasks", async (request: Request, response: Response) => {
-      const r = await taskModel.paginate();
+      const r = await taskModel.findOne({});
+      r?.hello('comment tu va?');
       response.send(r);
     });
 

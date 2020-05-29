@@ -7,6 +7,7 @@ interface ITask extends Document {
   doubleName: string;
   createdAt: Date;
   updatedAt: Date;
+  hello: (value: string) => void;
 }
 
 export default mongooseModel<ITask>({
@@ -30,11 +31,16 @@ export default mongooseModel<ITask>({
     {
       fieldName: "doubleName",
       get: function () {
-        const s = this as any;
-        return s.name + " " + s.name;
+        return this.name + " " + this.name;
       },
     },
   ],
-  plugins: (schema: Schema<any>) => {},
-  externalConfig: (schema: Schema<any>) => {},
+  methods: {
+    hello: function (message: string) {
+      console.log(`Hello ${this.name}! ${message}`);
+    },
+  },
+  plugins: function (schema: Schema<any>) {},
+  externalConfig: function (schema, model) {
+  },
 });

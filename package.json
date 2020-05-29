@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ovnicode/noreajs-mongoose.git"
+    "url": "https://github.com/noreajs/mongoose.git"
   },
   "keywords": [
     "noreajs",
@@ -23,9 +23,9 @@
   "author": "Ovnicode",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ovnicode/noreajs-mongoose/issues"
+    "url": "https://github.com/noreajs/mongoose/issues"
   },
-  "homepage": "https://github.com/ovnicode/noreajs-mongoose/blob/master/README.md",
+  "homepage": "https://github.com/noreajs/mongoose/blob/master/README.md",
   "dependencies": {
     "mongoose": "^5.8.3",
     "mongoose-aggregate-paginate-v2": "^1.0.4",

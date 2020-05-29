@@ -1,4 +1,4 @@
-import { Schema, model, Document, connection } from "mongoose";
+import { Schema, model, Document, connection, PaginateModel } from "mongoose";
 import mongoosePaginate from "mongoose-paginate";
 import mongooseAutopopulate from "mongoose-autopopulate";
 import mongooseLeanVirtuals from "mongoose-lean-virtuals";
@@ -147,16 +147,16 @@ export type MoongooseModelParams<T extends Document> = {
    * Virtuals - https://mongoosejs.com/docs/guide.html#virtuals
    *
    * ```
-   * externalConfig: (schema) => {
+   * externalConfig: function (schema, model) {
    *     // Method example
    *     schema.methods = {
-   *       verifyPassword: (value: string) => {
+   *       verifyPassword: function (value: string) {
    *         // your code here
    *       },
    *     };
    *
    *     // Middleware example
-   *     schema.pre("save", () => {
+   *     schema.pre("save", function () {
    *       // thing to do before save the object
    *     });
    *
@@ -172,14 +172,30 @@ export type MoongooseModelParams<T extends Document> = {
    *   }
    * ```
    */
-  externalConfig?: (schema: Schema) => void;
+  externalConfig?: (schema: Schema, model: PaginateModel<T>) => void;
 
   /**
    * Define virtuals field
+   * 
+   * @description For more flexibility define your virtuals in externalConfig method
    */
   virtuals?: [
-    { fieldName: string; options?: any; get: Function; set?: Function }
+    {
+      fieldName: string;
+      options?: any;
+      get: (this: T) => any | Promise<any>;
+      set?: (this: T) => void | Promise<void>;
+    }
   ];
+
+  /**
+   * Define model methods
+   * 
+   * @description For more flexibility define your virtuals in externalConfig method
+   */
+  methods?: {
+    [K in keyof Partial<T>]:(this: T,...rest:any[]) => any | Promise<any>
+  }
 };
 
 /**
@@ -204,13 +220,12 @@ export default function mongooseModel<T extends Document>(
     }
   }
 
-  // apply external config
-  if (params.externalConfig) {
-    params.externalConfig(schema);
-  }
-  // apply plugins
-  if (params.plugins) {
-    params.plugins(schema);
+  /**
+   * Methods
+   * #Must purpose to the mongoose official !important
+   */
+  if(params.methods){
+    schema.methods = params.methods as any;
   }
 
   /**
@@ -248,6 +263,19 @@ export default function mongooseModel<T extends Document>(
     schema.plugin(mongooseUniqueValidator, {
       message: params.uniqueValidatorMessage || "Expected {PATH} to be unique.",
     });
+  }
+
+  // apply plugins
+  if (params.plugins) {
+    params.plugins(schema);
+  }
+
+  // apply external config
+  if (params.externalConfig) {
+    params.externalConfig(
+      schema,
+      model<T>(params.name, schema, params.collection, params.skipInit)
+    );
   }
 
   // create model
