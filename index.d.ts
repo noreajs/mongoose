@@ -166,7 +166,7 @@ export type MoongooseModelParams<T extends Document> = {
    * Virtuals - https://mongoosejs.com/docs/guide.html#virtuals
    *
    * ```
-   * externalConfig: function (schema:Schema, model:PaginateModel<T>) {
+   * externalConfig: function (schema) {
    *     // Method example
    *     schema.methods = {
    *       verifyPassword: function (value: string) {
@@ -191,7 +191,7 @@ export type MoongooseModelParams<T extends Document> = {
    *   }
    * ```
    */
-  externalConfig?: (schema: Schema, model: PaginateModel<T>) => void;
+  externalConfig?: (schema: Schema) => void;
 
   /**
    * Define virtuals field

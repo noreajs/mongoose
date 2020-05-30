@@ -147,7 +147,7 @@ export type MoongooseModelParams<T extends Document> = {
    * Virtuals - https://mongoosejs.com/docs/guide.html#virtuals
    *
    * ```
-   * externalConfig: function (schema, model) {
+   * externalConfig: function (schema) {
    *     // Method example
    *     schema.methods = {
    *       verifyPassword: function (value: string) {
@@ -172,11 +172,11 @@ export type MoongooseModelParams<T extends Document> = {
    *   }
    * ```
    */
-  externalConfig?: (schema: Schema, model: PaginateModel<T>) => void;
+  externalConfig?: (schema: Schema) => void;
 
   /**
    * Define virtuals field
-   * 
+   *
    * @description For more flexibility define your virtuals in externalConfig method
    */
   virtuals?: [
@@ -190,12 +190,12 @@ export type MoongooseModelParams<T extends Document> = {
 
   /**
    * Define model methods
-   * 
+   *
    * @description For more flexibility define your virtuals in externalConfig method
    */
   methods?: {
-    [K in keyof Partial<T>]:(this: T,...rest:any[]) => any | Promise<any>
-  }
+    [K in keyof Partial<T>]: (this: T, ...rest: any[]) => any | Promise<any>;
+  };
 };
 
 /**
@@ -224,7 +224,7 @@ export default function mongooseModel<T extends Document>(
    * Methods
    * #Must purpose to the mongoose official !important
    */
-  if(params.methods){
+  if (params.methods) {
     schema.methods = params.methods as any;
   }
 
@@ -272,10 +272,7 @@ export default function mongooseModel<T extends Document>(
 
   // apply external config
   if (params.externalConfig) {
-    params.externalConfig(
-      schema,
-      model<T>(params.name, schema, params.collection, params.skipInit)
-    );
+    params.externalConfig(schema);
   }
 
   // create model

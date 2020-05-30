@@ -41,6 +41,6 @@ export default mongooseModel<ITask>({
     },
   },
   plugins: function (schema: Schema<any>) {},
-  externalConfig: function (schema, model) {
+  externalConfig: function (schema) {
   },
 });
