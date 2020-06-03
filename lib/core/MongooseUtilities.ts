@@ -24,10 +24,13 @@ export const linearizeErrors = (data: any, params?: ILinearizeErrorsParams) => {
   if (messages.length != 0) {
     data.message = messages.join("; ");
     if (params?.debugMode !== true) {
-      data.errors = undefined;
-      data._message = undefined;
-      data.stack = undefined;
-      data.name = undefined;
+      try {
+        data.errors = undefined;
+        data._message = undefined;
+        data.stack = undefined;
+      } catch (e) {
+        // some properties are readonly
+      }
     }
   }
   return data;
