@@ -10,10 +10,6 @@ The package already has his type definitions.
 npm install @noreajs/mongoose --save
 ```
 
-For typescript developers, make sure you install those type definitions packages:
-- @types/mongoose
-- @types/mongoose-paginate
-
 # Initial Features
 
 - MongoDB initialization
