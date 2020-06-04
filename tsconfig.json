@@ -6,6 +6,7 @@
         "strict": true,
         "esModuleInterop": true,
         "module": "commonjs",
-        "noImplicitThis": false
+        "noImplicitThis": false,
+        "declaration": true
     }
 }

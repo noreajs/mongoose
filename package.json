@@ -3,9 +3,9 @@
   "version": "0.0.14",
   "description": "Mongoose helpers",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "/dist/core",
-    "/index.d.ts"
+    "dist"
   ],
   "scripts": {
     "start": "tsc && node dist/test-server/run.js",
@@ -17,6 +17,8 @@
   },
   "keywords": [
     "noreajs",
+    "norea",
+    "norea.js",
     "mongoose",
     "framework"
   ],
