@@ -11,7 +11,7 @@
     "start": "tsc && node dist/test-server/run.js",
     "test": "echo \"No test specified\"",
     "build": "tsc",
-    "prepare": "build"
+    "prepare": "tsc"
   },
   "repository": {
     "type": "git",
