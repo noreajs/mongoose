@@ -9,7 +9,9 @@
   ],
   "scripts": {
     "start": "tsc && node dist/test-server/run.js",
-    "test": "echo \"No test specified\""
+    "test": "echo \"No test specified\"",
+    "build": "tsc",
+    "prepare": "build"
   },
   "repository": {
     "type": "git",
