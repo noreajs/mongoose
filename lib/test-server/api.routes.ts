@@ -20,8 +20,8 @@ export default new NoreaAppRoutes({
 
     app.get("/tasks", async (request: Request, response: Response) => {
       const r = await taskModel.findById("5eca5dfcb03d800d009fb9b0");
-      if(r){
-        r.hello('comment tu va?');
+      if (r) {
+        r.hello("comment tu va?");
       }
       return response.send(r);
     });
@@ -33,6 +33,9 @@ export default new NoreaAppRoutes({
             name: "name",
           });
           await r.save();
+
+          await r.delete();
+          
           response.send(r);
         } catch (error) {
           console.log(error);

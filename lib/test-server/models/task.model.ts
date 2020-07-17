@@ -1,7 +1,8 @@
 import { Document, Schema } from "mongoose";
 import mongooseModel from "../../core/MongooseModel";
+import { SoftDeleteDocument } from "mongoose-delete";
 
-interface ITask extends Document {
+interface ITask extends SoftDeleteDocument {
   name: string;
   description?: string;
   doubleName: string;
@@ -13,6 +14,10 @@ interface ITask extends Document {
 export default mongooseModel<ITask>({
   name: "Task",
   collection: "tasks",
+  softDelete: true,
+  softDeleteOptions: {
+    deletedAt: true,
+  },
   schema: new Schema(
     {
       name: {

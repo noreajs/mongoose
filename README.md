@@ -2,6 +2,12 @@
 
 NoreaJs Mongoose is a package which contains a set of tools intended to facilitate the use of mongoose.
 
+[![Version](https://img.shields.io/npm/v/@noreajs/mongoose.svg)](https://npmjs.org/package/@noreajs/mongoose)
+
+[![Downloads/week](https://img.shields.io/npm/dw/@noreajs/mongoose.svg)](https://npmjs.org/package/@noreajs/mongoose)
+
+[![License](https://img.shields.io/npm/l/@noreajs/cli.svg)](https://github.com/noreajs/mongoose/blob/master/package.json)
+
 # Installation
 
 The package already has his type definitions.
@@ -93,6 +99,16 @@ type MoongooseModelParams<T extends Document> = {
   leanVirtuals?: boolean;
   uniqueValidator?: boolean;
   uniqueValidatorMessage?: string;
+  softDelete?: boolean;
+  softDeleteOptions?: {
+    deletedBy?: boolean;
+    deletedAt?: boolean;
+    overrideMethods?: boolean | string | string[];
+    validateBeforeDelete?: boolean;
+    indexFields?: boolean | string | string[];
+    use$neOperator?: boolean;
+    [key: string]: any;
+  };
   virtuals?: [
     {
       fieldName: string;
@@ -122,6 +138,8 @@ MoongooseModelParams<T> descriptions:
 | leanVirtuals | boolean | true | true | Attach virtuals to the results of Mongoose queries when using \.lean\(\)\. |
 | uniqueValidator | boolean | true | true | Catch unique validation error like normal validation error |
 | uniqueValidatorMessage | string | true | Expected \{PATH\} to be unique\. | Unique validator message You can pass through a custom error message as part of the optional options argument: You have access to all of the standard Mongoose error message templating: :\{PATH\}, \{VALUE\}, \{TYPE\} |
+| softDelete | boolean | true | false | Active soft delete on model |
+| softDeleteOptions | any | true |  | Soft delete options |
 | plugins | function | true | | Add globaly a plugin to a mongoose schema |
 | schema | mongoose\.Schema | true | | Mongoose schema defining the model |
 | virtuals | array | true | | Define the virtual attributes of the model |

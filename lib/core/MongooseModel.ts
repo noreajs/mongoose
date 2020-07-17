@@ -1,8 +1,9 @@
-import { Schema, model, Document, connection, PaginateModel } from "mongoose";
+import { Schema, model, Document, connection } from "mongoose";
 import mongoosePaginate from "mongoose-paginate";
 import mongooseAutopopulate from "mongoose-autopopulate";
 import mongooseLeanVirtuals from "mongoose-lean-virtuals";
 import mongooseUniqueValidator from "mongoose-unique-validator";
+import mongooseDelete from "mongoose-delete";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
@@ -47,7 +48,7 @@ export type MoongooseModelParams<T extends Document> = {
    *
    * Only apply this plugin to top-level schemas. Don't apply this plugin to child schemas.
    *
-   * @default false
+   * @default true
    *
    * https://www.npmjs.com/package/mongoose-autopopulate
    *
@@ -196,6 +197,50 @@ export type MoongooseModelParams<T extends Document> = {
   methods?: {
     [K in keyof Partial<T>]: (this: T, ...rest: any[]) => any | Promise<any>;
   };
+
+  /**
+   * Configure soft delete
+   * https://github.com/dsanel/mongoose-delete
+   *
+   * @default true
+   */
+  softDelete?: boolean;
+
+  /**
+   * Soft delete options
+   */
+  softDeleteOptions?: {
+    /**
+     * Who has deleted the data?
+     */
+    deletedBy?: boolean;
+
+    /**
+     * Save time of deletion
+     */
+    deletedAt?: boolean;
+
+    /**
+     * We have the option to override all standard methods or only specific methods
+     */
+    overrideMethods?: boolean | string | string[];
+
+    /**
+     * Disable model validation on delete
+     */
+    validateBeforeDelete?: boolean;
+
+    /**
+     * Create index on fields
+     */
+    indexFields?: boolean | string | string[];
+
+    /**
+     * Disable use of $ne operator
+     */
+    use$neOperator?: boolean;
+    [key: string]: any;
+  };
 };
 
 /**
@@ -263,6 +308,13 @@ export default function mongooseModel<T extends Document>(
     schema.plugin(mongooseUniqueValidator, {
       message: params.uniqueValidatorMessage || "Expected {PATH} to be unique.",
     });
+  }
+
+  /**
+   * Soft delete
+   */
+  if (params.softDelete === true) {
+    schema.plugin(mongooseDelete, params.softDeleteOptions as any);
   }
 
   // apply plugins
