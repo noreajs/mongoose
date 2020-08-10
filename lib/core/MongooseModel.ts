@@ -4,6 +4,7 @@ import mongooseAutopopulate from "mongoose-autopopulate";
 import mongooseLeanVirtuals from "mongoose-lean-virtuals";
 import mongooseUniqueValidator from "mongoose-unique-validator";
 import mongooseDelete from "mongoose-delete";
+import protect, { ProtectFuncOptions } from "../plugins/protect";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
@@ -241,6 +242,11 @@ export type MoongooseModelParams<T extends Document> = {
     use$neOperator?: boolean;
     [key: string]: any;
   };
+
+  /**
+   * Protect attributes from mass assignment
+   */
+  protectOptions?: ProtectFuncOptions;
 };
 
 /**
@@ -313,8 +319,19 @@ export default function mongooseModel<T extends Document>(
   /**
    * Soft delete
    */
-  if (params.softDelete === true) {
+  if (
+    params.softDelete === true ||
+    (!!params.softDeleteOptions &&
+      Object.keys(params.softDeleteOptions).length !== 0)
+  ) {
     schema.plugin(mongooseDelete, params.softDeleteOptions as any);
+  }
+
+  /**
+   * Apply protect
+   */
+  if (!!params.protectOptions) {
+    schema.plugin(protect, params.protectOptions);
   }
 
   // apply plugins

@@ -19,26 +19,19 @@ export default new NoreaAppRoutes({
     });
 
     app.get("/tasks", async (request: Request, response: Response) => {
-      const r = await taskModel.findById("5eca5dfcb03d800d009fb9b0");
-      if (r) {
-        r.hello("comment tu va?");
-      }
+      const r = await taskModel.find();
       return response.send(r);
     });
 
     app.route("/tasks").post([
       async (request: Request, response: Response) => {
         try {
-          const r = new taskModel({
-            name: "name",
+          const r = await taskModel.create({
+            name: request.body.name,
+            description: request.body.description,
           });
-          await r.save();
-
-          await r.delete();
-          
           response.send(r);
         } catch (error) {
-          console.log(error);
           response.status(500).json(error);
         }
       },

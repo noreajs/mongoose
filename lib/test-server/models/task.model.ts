@@ -1,6 +1,7 @@
 import { Document, Schema } from "mongoose";
 import mongooseModel from "../../core/MongooseModel";
 import { SoftDeleteDocument } from "mongoose-delete";
+import protect from "../../plugins/protect";
 
 interface ITask extends SoftDeleteDocument {
   name: string;
@@ -14,18 +15,21 @@ interface ITask extends SoftDeleteDocument {
 export default mongooseModel<ITask>({
   name: "Task",
   collection: "tasks",
-  softDelete: true,
   softDeleteOptions: {
     deletedAt: true,
+    overrideMethods: true,
   },
   schema: new Schema(
     {
       name: {
         type: Schema.Types.String,
         required: [true, "Task's name is required"],
+        // massfillable: true,
+        hidden: true,
       },
       description: {
         type: Schema.Types.String,
+        massAssignable: false
       },
     },
     {
@@ -45,7 +49,8 @@ export default mongooseModel<ITask>({
       console.log(`Hello ${this.name}! ${message}`);
     },
   },
-  plugins: function (schema: Schema<any>) {},
-  externalConfig: function (schema) {
+  plugins: function (schema: Schema<ITask>) {
+    schema.plugin(protect, {});
   },
+  externalConfig: function (schema) {},
 });
