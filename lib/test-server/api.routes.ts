@@ -18,17 +18,42 @@ export default new NoreaAppRoutes({
       });
     });
 
+    /**
+     * Fetch tasks
+     */
     app.get("/tasks", async (request: Request, response: Response) => {
-      const r = await taskModel.find();
+      const r = await taskModel.find({}).lean({ virtuals: true });
       return response.send(r);
     });
 
+    /**
+     * Create task
+     */
     app.route("/tasks").post([
       async (request: Request, response: Response) => {
         try {
           const r = await taskModel.create({
             name: request.body.name,
             description: request.body.description,
+          });
+          response.send(r);
+        } catch (error) {
+          response.status(500).json(error);
+        }
+      },
+    ]);
+
+    /**
+     * Update many tasks
+     */
+    app.route("/tasks/mass").put([
+      async (request: Request, response: Response) => {
+        try {
+          const r = await taskModel.updateMany({}, {
+            $set: {
+              name: request.body.name,
+              description: request.body.description,
+            }
           });
           response.send(r);
         } catch (error) {

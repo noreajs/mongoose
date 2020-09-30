@@ -37,6 +37,9 @@ export default function protect<T extends Document = any>(
   const fillable = Array.from<keyof T | string>(options.fillable ?? []);
   const guarded = Array.from<keyof T | string>(options.guarded ?? []);
 
+  // global options have been set
+  const globalOptionsDefined = fillable.length !== 0 || guarded.length !== 0;
+
   /**
    * Extract inline definition
    */
@@ -47,12 +50,8 @@ export default function protect<T extends Document = any>(
         fillable.push(key);
       } else if (element.massAssignable === false) {
         guarded.push(key);
-      } else {
-        if (fillable.includes(key)) {
-          guarded.push(key);
-        } else if (guarded.includes(key)) {
-          fillable.push(key);
-        }
+      } else if (!globalOptionsDefined) {
+        fillable.push(key);
       }
     }
   }
@@ -62,13 +61,7 @@ export default function protect<T extends Document = any>(
    * @param key property name
    */
   function isAssignableKey(key: string): boolean {
-    return (
-      fillable.includes(key) ||
-      !guarded.includes(key) ||
-      (!!options.guarded &&
-        options.guarded.length === 0 &&
-        fillable.length === 0)
-    );
+    return fillable.includes(key) || !Object.keys(definitions).includes(key);
   }
 
   /**
@@ -162,35 +155,35 @@ export default function protect<T extends Document = any>(
     options.errorCb
   );
 
-  schema.pre(
-    "update",
-    function (next) {
-      try {
-        // apply update method filter
-        updateMethodsFilter(this.getUpdate());
-        // continue
-        next();
-      } catch (error) {
-        next(error);
-      }
-    },
-    options.errorCb
-  );
+  // schema.pre(
+  //   "update",
+  //   function (next) {
+  //     try {
+  //       // apply update method filter
+  //       updateMethodsFilter(this.getUpdate());
+  //       // continue
+  //       next();
+  //     } catch (error) {
+  //       next(error);
+  //     }
+  //   },
+  //   options.errorCb
+  // );
 
-  schema.pre(
-    "updateOne",
-    function (next) {
-      try {
-        // apply update method filter
-        updateMethodsFilter(this.getUpdate());
-        // continue
-        next();
-      } catch (error) {
-        next(error);
-      }
-    },
-    options.errorCb
-  );
+  // schema.pre(
+  //   "updateOne",
+  //   function (next) {
+  //     try {
+  //       // apply update method filter
+  //       updateMethodsFilter(this.getUpdate());
+  //       // continue
+  //       next();
+  //     } catch (error) {
+  //       next(error);
+  //     }
+  //   },
+  //   options.errorCb
+  // );
 
   /**
    * Mass insert
@@ -198,7 +191,14 @@ export default function protect<T extends Document = any>(
   schema.pre(
     "insertMany",
     function (next, docs) {
-      applyFilter(docs, next);
+      try {
+        // apply update method filter
+        applyFilter(docs, next);
+        // continue
+        next();
+      } catch (error) {
+        next(error);
+      }
     },
     options.errorCb
   );
