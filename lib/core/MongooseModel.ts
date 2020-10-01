@@ -5,8 +5,15 @@ import mongooseLeanVirtuals from "mongoose-lean-virtuals";
 import mongooseUniqueValidator from "mongoose-unique-validator";
 import mongooseDelete from "mongoose-delete";
 import protect, { ProtectFuncOptions } from "../plugins/protect";
+import privacy, { PrivacyFuncOptions } from "../plugins/privacy";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
+
+export type QueryMethod = "find" | "findOne" | "findById" | string;
+
+export type GlobalFilter<T extends Document> = {
+  [key in QueryMethod]?: (docs: T[]) => void;
+};
 
 export type MoongooseModelParams<T extends Document> = {
   /**
@@ -247,6 +254,16 @@ export type MoongooseModelParams<T extends Document> = {
    * Protect attributes from mass assignment
    */
   protectOptions?: ProtectFuncOptions;
+
+  /**
+   * Display or hide attributes
+   */
+  privacyOptions?: PrivacyFuncOptions;
+
+  /**
+   * Query global filters
+   */
+  postFilters?: GlobalFilter<T>;
 };
 
 /**
@@ -332,6 +349,41 @@ export default function mongooseModel<T extends Document>(
    */
   if (!!params.protectOptions) {
     schema.plugin(protect, params.protectOptions);
+  }
+
+  /**
+   * Apply privacy
+   */
+  if (!!params.privacyOptions) {
+    schema.plugin(privacy, params.privacyOptions);
+  }
+
+  /**
+   * Apply global filters on post middleware
+   */
+  if (!!params.postFilters) {
+    // iterate post filters
+    for (const key in params.postFilters) {
+      if (Object.prototype.hasOwnProperty.call(params.postFilters, key)) {
+        // load method
+        const method = params.postFilters[key];
+
+        if (method) {
+          // define post event
+          schema.post<T>(key, function (docs: any, next) {
+            if (!Array.isArray(docs)) {
+              docs = [docs];
+            }
+
+            // apply filter
+            method(docs);
+
+            // continue
+            next();
+          });
+        }
+      }
+    }
   }
 
   // apply plugins

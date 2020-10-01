@@ -1,8 +1,6 @@
 import { Document, Schema } from "mongoose";
 import mongooseModel from "../../core/MongooseModel";
 import { SoftDeleteDocument } from "mongoose-delete";
-import protect from "../../plugins/protect";
-import privacy from "../../plugins/privacy";
 
 interface ITask extends SoftDeleteDocument {
   name: string;
@@ -19,6 +17,13 @@ export default mongooseModel<ITask>({
   softDeleteOptions: {
     deletedAt: true,
     overrideMethods: true,
+  },
+  postFilters: {
+    find: (docs) => {
+      for (const doc of docs) {
+        
+      }
+    }
   },
   schema: new Schema(
     {
@@ -50,8 +55,7 @@ export default mongooseModel<ITask>({
     },
   },
   plugins: function (schema: Schema<ITask>) {
-    schema.plugin(protect, {});
-    schema.plugin(privacy, {});
+    
   },
   externalConfig: function (schema) {},
 });

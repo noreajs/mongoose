@@ -1,6 +1,6 @@
-# NoreaJs Mongoose
+# Norea.js Mongoose
 
-NoreaJs Mongoose is a package which contains a set of tools intended to facilitate the use of mongoose.
+Norea.js Mongoose is a package which contains a set of tools intended to facilitate the use of mongoose.
 
 [![Version](https://img.shields.io/npm/v/@noreajs/mongoose.svg)](https://npmjs.org/package/@noreajs/mongoose)
 
@@ -117,6 +117,19 @@ type MoongooseModelParams<T extends Document> = {
       set?: Function;
     }
   ];
+  protectOptions?: {
+      fillable?: Array<keyof T | string>;
+      guarded?: Array<keyof T | string>;
+      errorCb?: HookErrorCallback;
+  };
+  privacyOptions?: {
+      hidden?: Array<keyof T | string>;
+      visible?: Array<keyof T | string>;
+      errorCb?: HookErrorCallback;
+  };
+  postFilters?: {
+      [key in QueryMethod]?: (docs: T[]) => void;
+  };
   methods: {
     [K in keyof Partial<T>]: Function;
   };
@@ -140,65 +153,18 @@ MoongooseModelParams<T> descriptions:
 | uniqueValidatorMessage | string | true | Expected \{PATH\} to be unique\. | Unique validator message You can pass through a custom error message as part of the optional options argument: You have access to all of the standard Mongoose error message templating: :\{PATH\}, \{VALUE\}, \{TYPE\} |
 | softDelete | boolean | true | false | Active soft delete on model |
 | softDeleteOptions | any | true |  | Soft delete options |
-| plugins | function | true | | Add globaly a plugin to a mongoose schema |
+| plugins | function | true | | Add globally a plugin to a mongoose schema |
 | schema | mongoose\.Schema | true | | Mongoose schema defining the model |
 | virtuals | array | true | | Define the virtual attributes of the model |
 | methods | object | true | | Define the methods associated with the models |
 | externalConfig | function | true | | Configure the schema created by adding methods, middlewares, virtuals and many other things provided by Mongoose \- Methods \- https://mongoosejs\.com/docs/guide\.html\#methods \- Middlewares \- https://mongoosejs\.com/docs/middleware\.html \- Virtuals \- https://mongoosejs\.com/docs/guide\.html\#virtuals |
+| protectOptions | object | true | | Prevent mass assignment on some attributes |
+| privacyOptions | object | true | | hide or display some attributes while fetching data |
+| postFilters | object | true | | Filters to apply on post middleware |
 
 _Table made with [Table Convert](https://tableconvert.com/)_
 
-### Extraction of errors during validations
 
-Linearize Mongoose errors when you catch them. The method used is **linearizeErrors**.
-
-Mongoose validation errors normaly looks like this:
-
-```json
-{
-  "message": "Validation Error: First error, second error and many other (maybe) unnecessary",
-  "errors": {
-    "fieldA": {
-      "message": "The field A is required",
-      "...": "..."
-    },
-    "fieldB": {
-      "message": "Th field B is not required (lol)",
-      "...": "..."
-    }
-  }
-}
-```
-
-While using _linearizeErrors_ method, the error data become:
-
-```json
-{
-  "message": "This field A is required; Th field B is not required (lol)"
-}
-```
-
-Example:
-
-```typescript
-try {
-  const task = new Task({
-    name: "Install it",
-    description: "",
-  });
-
-  await task.save();
-} catch (e) {
-  // linearize here
-  linearizeErrors(e);
-
-  // or
-  // linearizeErrors(e, {debug: true}); // to keep the original 'errors' attribute
-
-  // return the response
-  return res.status(500).json(e);
-}
-```
 
 ### Todos
 
