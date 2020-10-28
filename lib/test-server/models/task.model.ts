@@ -21,20 +21,24 @@ export default mongooseModel<ITask>({
   postFilters: {
     find: (docs) => {
       for (const doc of docs) {
-        
       }
-    }
+    },
   },
   schema: new Schema(
     {
       name: {
         type: Schema.Types.String,
-        required: [true, "Task's name is required"],
+        // required: [true, "Task's name is required"],
+        requiredWith: ["description"],
         hidden: false,
+      },
+      title: {
+        type: Schema.Types.String,
+        requiredWith: "name",
       },
       description: {
         type: Schema.Types.String,
-        massAssignable: false
+        massAssignable: false,
       },
     },
     {
@@ -54,8 +58,6 @@ export default mongooseModel<ITask>({
       console.log(`Hello ${this.name}! ${message}`);
     },
   },
-  plugins: function (schema: Schema<ITask>) {
-    
-  },
+  plugins: function (schema: Schema<ITask>) {},
   externalConfig: function (schema) {},
 });

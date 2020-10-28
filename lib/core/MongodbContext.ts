@@ -14,16 +14,12 @@ export type MongoDBContextParams = {
   /**
    * Method to be executed when the connection to MongoDB has been etablished
    */
-  onConnect?:
-    | ((connection: Connection) => Promise<void>)
-    | ((connection: Connection) => void);
+  onConnect?: (connection: Connection) => Promise<void> | void;
 
   /**
    * Method to be executed when an error occur during MongoDB connection
    */
-  onError?:
-    | ((connection: Connection) => Promise<void>)
-    | ((connection: Connection) => void);
+  onError?: (connection: Connection, error?: any) => Promise<void> | void;
 };
 
 class MongoDBContext {
@@ -60,16 +56,22 @@ class MongoDBContext {
       }
     });
 
-    // trigger connection
-    await connect(
-      params.connectionUrl,
-      params.options || {
-        useCreateIndex: true,
-        useNewUrlParser: true,
-        useFindAndModify: false,
-        useUnifiedTopology: true,
+    try {
+      // trigger connection
+      await connect(
+        params.connectionUrl,
+        params.options || {
+          useCreateIndex: true,
+          useNewUrlParser: true,
+          useFindAndModify: false,
+          useUnifiedTopology: true,
+        }
+      );
+    } catch (error) {
+      if (params.onError) {
+        await params.onError(db, error);
       }
-    );
+    }
   }
 }
 

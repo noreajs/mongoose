@@ -6,6 +6,9 @@ import mongooseUniqueValidator from "mongoose-unique-validator";
 import mongooseDelete from "mongoose-delete";
 import protect, { ProtectFuncOptions } from "../plugins/protect";
 import privacy, { PrivacyFuncOptions } from "../plugins/privacy";
+import RequiredWith from "../plugins/requiredWith";
+import RequiredIf from "../plugins/requiredIf";
+import RequiredWithout from "../plugins/requiredWithout";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
@@ -357,6 +360,13 @@ export default function mongooseModel<T extends Document>(
   if (!!params.privacyOptions) {
     schema.plugin(privacy, params.privacyOptions);
   }
+
+  /**
+   * Native plugins
+   */
+  schema.plugin(RequiredWith, {});
+  schema.plugin(RequiredWithout, {});
+  schema.plugin(RequiredIf, {});
 
   /**
    * Apply global filters on post middleware
