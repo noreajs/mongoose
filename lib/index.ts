@@ -1,3 +1,7 @@
+import { RequiredIfDefinitionType } from "./plugins/requiredIf";
+
+export { RequiredIfDefinitionType } from "./plugins/requiredIf";
+
 export {
   linearizeErrors,
   ILinearizeErrorsParams,
@@ -8,3 +12,14 @@ export {
 } from "./core/MongooseModel";
 export { default as MongoDBContext } from "./core/MongoDBContext";
 export { default as protect, ProtectFuncOptions } from "./plugins/protect";
+
+declare global {
+  interface SchemaTypeOpts<T> {
+    requiredWith: string | Array<string>;
+    requiredWithAll: string | Array<string>;
+    requiredWithout: string | Array<string>;
+    requiredWithoutAll: string | Array<string>;
+    requiredIf: RequiredIfDefinitionType | Array<RequiredIfDefinitionType>;
+    requiredIfAll: RequiredIfDefinitionType | Array<RequiredIfDefinitionType>;
+  }
+}
