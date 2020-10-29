@@ -87,8 +87,8 @@ export default function RequiredWith<T extends Document = any>(
             (typeof newObj[field] === "string" &&
               `${newObj[field]}`.length === 0)
           ) {
-            const requiredWith = context.get(field);
-            for (const target of requiredWith ?? []) {
+            const targets = context.get(field);
+            for (const target of targets ?? []) {
               if (
                 (newObj[target] !== null &&
                   newObj[target] !== undefined &&

@@ -29,12 +29,12 @@ export default mongooseModel<ITask>({
       name: {
         type: Schema.Types.String,
         // required: [true, "Task's name is required"],
-        requiredWith: ["description"],
+        // requiredWithAll: ["description"],
         hidden: false,
       },
       title: {
         type: Schema.Types.String,
-        requiredWith: "name",
+        requiredWithoutAll: ["name", "description"],
       },
       description: {
         type: Schema.Types.String,

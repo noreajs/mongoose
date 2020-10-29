@@ -9,6 +9,8 @@ import privacy, { PrivacyFuncOptions } from "../plugins/privacy";
 import RequiredWith from "../plugins/requiredWith";
 import RequiredIf from "../plugins/requiredIf";
 import RequiredWithout from "../plugins/requiredWithout";
+import RequiredWithAll from "../plugins/requiredWithAll";
+import RequiredWithoutAll from "../plugins/requiredWithoutAll";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
@@ -365,7 +367,9 @@ export default function mongooseModel<T extends Document>(
    * Native plugins
    */
   schema.plugin(RequiredWith, {});
+  schema.plugin(RequiredWithAll, {});
   schema.plugin(RequiredWithout, {});
+  schema.plugin(RequiredWithoutAll, {});
   schema.plugin(RequiredIf, {});
 
   /**

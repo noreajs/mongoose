@@ -1,10 +1,6 @@
-import mongoose, {
-  Schema,
-  HookErrorCallback,
-  Document,
-} from "mongoose";
+import mongoose, { Schema, HookErrorCallback, Document } from "mongoose";
 
-export declare type RequiredWithoutFuncOptions<T extends Document = any> = {
+export declare type RequiredWithAllFuncOptions<T extends Document = any> = {
   /**
    * Error callback
    */
@@ -16,9 +12,9 @@ export declare type RequiredWithoutFuncOptions<T extends Document = any> = {
  * @param schema mongoose schem
  * @param options options
  */
-export default function RequiredWithout<T extends Document = any>(
+export default function RequiredWithAll<T extends Document = any>(
   schema: Schema<T>,
-  options: RequiredWithoutFuncOptions<T>
+  options: RequiredWithAllFuncOptions<T>
 ) {
   // model deifinitions
   const definitions = schema.obj;
@@ -43,20 +39,20 @@ export default function RequiredWithout<T extends Document = any>(
     if (Object.prototype.hasOwnProperty.call(definitions, key)) {
       const element = definitions[key];
 
-      if (element.requiredWithout) {
+      if (element.requiredWithAll) {
         // exits
         const exists = [];
 
-        if (!Array.isArray(element.requiredWithout)) {
-          element.requiredWithout = [element.requiredWithout];
+        if (!Array.isArray(element.requiredWithAll)) {
+          element.requiredWithAll = [element.requiredWithAll];
         }
 
         // verify required with targets
-        for (const target of element.requiredWithout) {
+        for (const target of element.requiredWithAll) {
           if (!modelProperties.includes(target)) {
             console.error(
               new Error(
-                `requiredWithout -> "${target}" is not a property of the model`
+                `RequiredWithAll -> "${target}" is not a property of the model`
               )
             );
           } else {
@@ -87,17 +83,30 @@ export default function RequiredWithout<T extends Document = any>(
               `${newObj[field]}`.length === 0)
           ) {
             const targets = context.get(field);
+
+            // defined targets count
+            var match = 0;
+
             for (const target of targets ?? []) {
               if (
-                ((newObj[target] === null || newObj[target] === undefined) &&
+                (newObj[target] !== null &&
+                  newObj[target] !== undefined &&
                   typeof newObj[target] !== "string") ||
                 (typeof newObj[target] === "string" &&
-                  `${newObj[target]}`.length === 0)
+                  `${newObj[target]}`.length !== 0)
               ) {
-                error.addError(field, {
-                  message: `\`${field}\` is required when \`${target}\` is missing.`,
-                });
+                match += 1;
               }
+            }
+
+            if (match === (targets ?? []).length) {
+              error.addError(field, {
+                message: `\`${field}\` is required when ${(targets ?? [])
+                  .map((t) => `\`${t}\``)
+                  .join(", ")} ${
+                  (targets ?? []).length > 1 ? "are present" : "is present"
+                }`,
+              });
             }
           }
         }
