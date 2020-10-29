@@ -1,10 +1,11 @@
-import mongoose, {
-  Schema,
-  HookErrorCallback,
-  Document,
-} from "mongoose";
+import mongoose, { Schema, HookErrorCallback, Document } from "mongoose";
 
-export declare type RequiredWithoutFuncOptions = {
+export declare type RequiredIfAllDefinitionType<T extends Document = any> = {
+  message?: string;
+  validator: (instance: T) => Promise<boolean> | boolean;
+};
+
+export declare type RequiredIfAllFuncOptions<T extends Document = any> = {
   /**
    * Error callback
    */
@@ -16,15 +17,15 @@ export declare type RequiredWithoutFuncOptions = {
  * @param schema mongoose schem
  * @param options options
  */
-export default function RequiredWithout<T extends Document = any>(
+export default async function RequiredIfAll<T extends Document = any>(
   schema: Schema<T>,
-  options: RequiredWithoutFuncOptions
+  options: RequiredIfAllFuncOptions<T>
 ) {
   // model deifinitions
   const definitions = schema.obj;
 
   // context
-  const context = new Map<string, Array<string>>();
+  const context = new Map<string, Array<RequiredIfAllDefinitionType<T>>>();
 
   // model properties
   const modelProperties: Array<string> = [];
@@ -43,24 +44,30 @@ export default function RequiredWithout<T extends Document = any>(
     if (Object.prototype.hasOwnProperty.call(definitions, key)) {
       const element = definitions[key];
 
-      if (element.requiredWithout) {
+      if (element.requiredIfAll) {
         // exits
         const exists = [];
 
-        if (!Array.isArray(element.requiredWithout)) {
-          element.requiredWithout = [element.requiredWithout];
+        if (!Array.isArray(element.requiredIfAll)) {
+          element.requiredIfAll = [element.requiredIfAll];
         }
 
         // verify required with targets
-        for (const target of element.requiredWithout) {
-          if (!modelProperties.includes(target)) {
+        for (const rule of element.requiredIfAll as Array<
+          RequiredIfAllDefinitionType<T>
+        >) {
+          if (!Object.keys(rule).includes("validator")) {
             console.error(
               new Error(
-                `requiredWithout -> "${target}" is not a property of the model`
+                `requiredIfAll -> the \`validator\` function is missing`
               )
             );
+          } else if (typeof rule.validator !== "function") {
+            console.error(
+              new Error(`requiredIfAll -> the \`validator\` must be a bunction`)
+            );
           } else {
-            exists.push(target);
+            exists.push(rule);
           }
         }
 
@@ -74,7 +81,7 @@ export default function RequiredWithout<T extends Document = any>(
 
   schema.pre(
     "save",
-    function (next) {
+    async function (next) {
       try {
         const newObj = this.toJSON();
         const error = new mongoose.Error.ValidationError(this);
@@ -86,18 +93,24 @@ export default function RequiredWithout<T extends Document = any>(
             (typeof newObj[field] === "string" &&
               `${newObj[field]}`.length === 0)
           ) {
-            const targets = context.get(field);
-            for (const target of targets ?? []) {
-              if (
-                ((newObj[target] === null || newObj[target] === undefined) &&
-                  typeof newObj[target] !== "string") ||
-                (typeof newObj[target] === "string" &&
-                  `${newObj[target]}`.length === 0)
-              ) {
-                error.addError(field, {
-                  message: `\`${field}\` is required when \`${target}\` is missing.`,
-                });
+            const rules = context.get(field);
+
+            // valid rules count
+            var match = 0;
+
+            for (const rule of rules ?? []) {
+              if (await rule.validator(this as any)) {
+                match += 1;
               }
+            }
+
+            if (match === (rules ?? []).length) {
+              error.addError(field, {
+                message:
+                  (rules ?? []).map((r) => r.message).length !== 0
+                    ? (rules ?? []).map((r) => r.message).join("; ")
+                    : `\`${field}\` is required.`,
+              });
             }
           }
         }

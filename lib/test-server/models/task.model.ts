@@ -30,11 +30,25 @@ export default mongooseModel<ITask>({
         type: Schema.Types.String,
         // required: [true, "Task's name is required"],
         // requiredWithAll: ["description"],
+        requiredIfAll: [
+          {
+            message: "I'm not happy today",
+            validator: async (task:ITask) => {
+              return true;
+            }
+          },
+          {
+            message: "I'm not happy today, i said!",
+            validator: async (task:ITask) => {
+              return false;
+            }
+          }
+        ],
         hidden: false,
       },
       title: {
         type: Schema.Types.String,
-        requiredWithoutAll: ["name", "description"],
+        // requiredWithoutAll: ["name", "description"],
       },
       description: {
         type: Schema.Types.String,

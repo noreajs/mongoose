@@ -6,11 +6,20 @@ import mongooseUniqueValidator from "mongoose-unique-validator";
 import mongooseDelete from "mongoose-delete";
 import protect, { ProtectFuncOptions } from "../plugins/protect";
 import privacy, { PrivacyFuncOptions } from "../plugins/privacy";
-import RequiredWith from "../plugins/requiredWith";
-import RequiredIf from "../plugins/requiredIf";
-import RequiredWithout from "../plugins/requiredWithout";
-import RequiredWithAll from "../plugins/requiredWithAll";
-import RequiredWithoutAll from "../plugins/requiredWithoutAll";
+import RequiredWith, { RequiredWithFuncOptions } from "../plugins/requiredWith";
+import RequiredIf, { RequiredIfFuncOptions } from "../plugins/requiredIf";
+import RequiredWithout, {
+  RequiredWithoutFuncOptions,
+} from "../plugins/requiredWithout";
+import RequiredWithAll, {
+  RequiredWithAllFuncOptions,
+} from "../plugins/requiredWithAll";
+import RequiredWithoutAll, {
+  RequiredWithoutAllFuncOptions,
+} from "../plugins/requiredWithoutAll";
+import RequiredIfAll, {
+  RequiredIfAllFuncOptions,
+} from "../plugins/requiredIfAll";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
@@ -366,11 +375,12 @@ export default function mongooseModel<T extends Document>(
   /**
    * Native plugins
    */
-  schema.plugin(RequiredWith, {});
-  schema.plugin(RequiredWithAll, {});
-  schema.plugin(RequiredWithout, {});
-  schema.plugin(RequiredWithoutAll, {});
-  schema.plugin(RequiredIf, {});
+  schema.plugin<RequiredWithFuncOptions>(RequiredWith, {});
+  schema.plugin<RequiredWithAllFuncOptions>(RequiredWithAll, {});
+  schema.plugin<RequiredWithoutFuncOptions>(RequiredWithout, {});
+  schema.plugin<RequiredWithoutAllFuncOptions>(RequiredWithoutAll, {});
+  schema.plugin<RequiredIfFuncOptions>(RequiredIf, {});
+  schema.plugin<RequiredIfAllFuncOptions>(RequiredIfAll, {});
 
   /**
    * Apply global filters on post middleware

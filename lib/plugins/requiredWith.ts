@@ -1,11 +1,10 @@
 import mongoose, {
   Schema,
-  HookNextFunction,
   HookErrorCallback,
   Document,
 } from "mongoose";
 
-export declare type RequiredWithFuncOptions<T extends Document = any> = {
+export declare type RequiredWithFuncOptions = {
   /**
    * Error callback
    */
@@ -19,7 +18,7 @@ export declare type RequiredWithFuncOptions<T extends Document = any> = {
  */
 export default function RequiredWith<T extends Document = any>(
   schema: Schema<T>,
-  options: RequiredWithFuncOptions<T>
+  options: RequiredWithFuncOptions
 ) {
   // model deifinitions
   const definitions = schema.obj;

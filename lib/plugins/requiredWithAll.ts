@@ -1,6 +1,6 @@
 import mongoose, { Schema, HookErrorCallback, Document } from "mongoose";
 
-export declare type RequiredWithAllFuncOptions<T extends Document = any> = {
+export declare type RequiredWithAllFuncOptions = {
   /**
    * Error callback
    */
@@ -14,7 +14,7 @@ export declare type RequiredWithAllFuncOptions<T extends Document = any> = {
  */
 export default function RequiredWithAll<T extends Document = any>(
   schema: Schema<T>,
-  options: RequiredWithAllFuncOptions<T>
+  options: RequiredWithAllFuncOptions
 ) {
   // model deifinitions
   const definitions = schema.obj;
@@ -52,7 +52,7 @@ export default function RequiredWithAll<T extends Document = any>(
           if (!modelProperties.includes(target)) {
             console.error(
               new Error(
-                `RequiredWithAll -> "${target}" is not a property of the model`
+                `requiredWithAll -> "${target}" is not a property of the model`
               )
             );
           } else {
