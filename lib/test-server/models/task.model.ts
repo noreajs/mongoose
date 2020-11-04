@@ -4,7 +4,8 @@ import { SoftDeleteDocument } from "mongoose-delete";
 
 require("./user.model");
 
-interface ITask extends SoftDeleteDocument {
+export interface ITask extends SoftDeleteDocument {
+  user: any;
   name: string;
   description?: string;
   doubleName: string;

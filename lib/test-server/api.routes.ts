@@ -1,6 +1,6 @@
 import { NoreaAppRoutes } from "@noreajs/core";
 import { Application, Request, Response } from "express";
-import taskModel from "./models/task.model";
+import taskModel, { ITask } from "./models/task.model";
 
 export default new NoreaAppRoutes({
   routes(app: Application): void {
@@ -32,7 +32,7 @@ export default new NoreaAppRoutes({
     app.route("/tasks").post([
       async (request: Request, response: Response) => {
         try {
-          const r = await taskModel.create({
+          const r = await taskModel.create<Partial<ITask>>({
             user: request.body.user,
             name: request.body.name,
             description: request.body.description,
@@ -50,12 +50,15 @@ export default new NoreaAppRoutes({
     app.route("/tasks/mass").put([
       async (request: Request, response: Response) => {
         try {
-          const r = await taskModel.updateMany({}, {
-            $set: {
-              name: request.body.name,
-              description: request.body.description,
+          const r = await taskModel.updateMany(
+            {},
+            {
+              $set: {
+                name: request.body.name,
+                description: request.body.description,
+              },
             }
-          });
+          );
           response.send(r);
         } catch (error) {
           response.status(500).json(error);
