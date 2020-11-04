@@ -33,6 +33,7 @@ export default new NoreaAppRoutes({
       async (request: Request, response: Response) => {
         try {
           const r = await taskModel.create({
+            user: request.body.user,
             name: request.body.name,
             description: request.body.description,
           });

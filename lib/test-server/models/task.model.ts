@@ -2,6 +2,8 @@ import { Document, Schema } from "mongoose";
 import mongooseModel from "../../core/MongooseModel";
 import { SoftDeleteDocument } from "mongoose-delete";
 
+require("./user.model");
+
 interface ITask extends SoftDeleteDocument {
   name: string;
   description?: string;
@@ -18,37 +20,19 @@ export default mongooseModel<ITask>({
     deletedAt: true,
     overrideMethods: true,
   },
-  postFilters: {
-    find: (docs) => {
-      for (const doc of docs) {
-      }
-    },
-  },
   schema: new Schema(
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: [true, "The user is required"],
+      },
       name: {
         type: Schema.Types.String,
-        // required: [true, "Task's name is required"],
-        // requiredWithAll: ["description"],
-        requiredIfAll: [
-          {
-            message: "I'm not happy today",
-            validator: async (task:ITask) => {
-              return true;
-            }
-          },
-          {
-            message: "I'm not happy today, i said!",
-            validator: async (task:ITask) => {
-              return false;
-            }
-          }
-        ],
         hidden: false,
       },
       title: {
         type: Schema.Types.String,
-        // requiredWithoutAll: ["name", "description"],
       },
       description: {
         type: Schema.Types.String,

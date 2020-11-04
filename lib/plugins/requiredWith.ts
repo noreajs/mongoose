@@ -12,7 +12,7 @@ export declare type RequiredWithFuncOptions = {
 };
 
 /**
- * Project model from mass assignment
+ * Required with validation
  * @param schema mongoose schem
  * @param options options
  */

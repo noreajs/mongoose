@@ -1,4 +1,4 @@
-import { Schema, model, Document, connection } from "mongoose";
+import { Schema, model, Document, connection, Model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate";
 import mongooseAutopopulate from "mongoose-autopopulate";
 import mongooseLeanVirtuals from "mongoose-lean-virtuals";
@@ -20,6 +20,9 @@ import RequiredWithoutAll, {
 import RequiredIfAll, {
   RequiredIfAllFuncOptions,
 } from "../plugins/requiredIfAll";
+import RefValidation, {
+  RefValidationFuncOptions,
+} from "../plugins/refValidation";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
@@ -381,6 +384,7 @@ export default function mongooseModel<T extends Document>(
   schema.plugin<RequiredWithoutAllFuncOptions>(RequiredWithoutAll, {});
   schema.plugin<RequiredIfFuncOptions>(RequiredIf, {});
   schema.plugin<RequiredIfAllFuncOptions>(RequiredIfAll, {});
+  schema.plugin<RefValidationFuncOptions>(RefValidation, {});
 
   /**
    * Apply global filters on post middleware
