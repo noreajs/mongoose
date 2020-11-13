@@ -65,7 +65,12 @@ export default function RefValidation<T extends Document = any>(
           const value = newObj[field];
           const ref = context.get(field);
 
-          if (ref && value) {
+          if (
+            ref &&
+            value !== null &&
+            value !== undefined &&
+            (typeof value === "string" ? value.length !== 0 : true)
+          ) {
             try {
               if (
                 !(await mongoose
