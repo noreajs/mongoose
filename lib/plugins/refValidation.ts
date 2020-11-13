@@ -67,7 +67,12 @@ export default function RefValidation<T extends Document = any>(
 
           if (ref && value) {
             try {
-              if (!(await mongoose.model(ref).findById(value))) {
+              if (
+                !(await mongoose
+                  .model(ref)
+                  .findById(value)
+                  .session(this.$session() ?? null))
+              ) {
                 error.addError(field, {
                   message: `\`${field}\` value is not a valid \`${ref}\`.`,
                 });
@@ -77,14 +82,16 @@ export default function RefValidation<T extends Document = any>(
                 console.error(error);
                 console.log(
                   colors.yellow(
-                    `ACTION REQUIRED: import the \`${ref}\` model in the \`${(this.constructor as any).modelName}\` model and everywhere it is used as reference. => require("model-${ref.toLowerCase()}-path").`
+                    `ACTION REQUIRED: import the \`${ref}\` model in the \`${
+                      (this.constructor as any).modelName
+                    }\` model and everywhere it is used as reference. => require("model-${ref.toLowerCase()}-path").`
                   )
                 );
                 console.log(
-                    colors.cyan(
-                      `This action is necessary to apply the validation process of the reference value.`
-                    )
-                  );
+                  colors.cyan(
+                    `This action is necessary to apply the validation process of the reference value.`
+                  )
+                );
               }
             }
           }
