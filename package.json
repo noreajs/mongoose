@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/noreajs/mongoose/blob/master/README.md",
   "dependencies": {
-    "@types/mongoose": "^5.7.37",
+    "@types/mongoose": "^5.10.1",
     "@types/mongoose-autopopulate": "^0.10.1",
     "@types/mongoose-delete": "^0.5.1",
     "@types/mongoose-lean-virtuals": "^0.5.1",
