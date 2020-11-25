@@ -48,7 +48,7 @@
     "mongoose-unique-validator": "^2.0.3"
   },
   "devDependencies": {
-    "@noreajs/core": "^1.1.0-8",
+    "@noreajs/core": "^1.1.3",
     "nodemon": "^2.0.4",
     "np": "^6.2.1",
     "ts-node": "^8.10.2",

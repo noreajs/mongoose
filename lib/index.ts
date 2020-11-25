@@ -12,6 +12,7 @@ export {
 } from "./core/MongooseModel";
 export { default as MongoDBContext } from "./core/MongoDBContext";
 export { default as protect, ProtectFuncOptions } from "./plugins/protect";
+export { MongoRule } from "./validation/rules/MongoRule";
 
 declare global {
   interface SchemaTypeOpts<T> {

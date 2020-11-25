@@ -1,6 +1,8 @@
-import { NoreaAppRoutes } from "@noreajs/core";
+import { NoreaAppRoutes, Validator } from "@noreajs/core";
 import { Application, Request, Response } from "express";
+import { MongoRule } from "../validation/rules/MongoRule";
 import taskModel, { ITask } from "./models/task.model";
+import userModel from "./models/user.model";
 
 export default new NoreaAppRoutes({
   routes(app: Application): void {
@@ -27,9 +29,30 @@ export default new NoreaAppRoutes({
     });
 
     /**
+     * Fetch users
+     */
+    app.get("/users", async (request: Request, response: Response) => {
+      const r = await userModel.find({}).lean({ virtuals: true });
+      return response.json(r);
+    });
+
+    /**
      * Create task
      */
     app.route("/tasks").post([
+      Validator.validateRequest("body", {
+        user: {
+          type: "string",
+          required: true,
+          rules: [
+            MongoRule.validObjectId,
+            MongoRule.exists("User", "_id"),
+            MongoRule.unique({
+              modelName: "Task",
+            }),
+          ],
+        },
+      }),
       async (request: Request, response: Response) => {
         try {
           const r = await taskModel.create<Partial<ITask>>({
