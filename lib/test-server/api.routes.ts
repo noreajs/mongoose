@@ -47,9 +47,6 @@ export default new NoreaAppRoutes({
           rules: [
             MongoRule.validObjectId,
             MongoRule.exists("User", "_id"),
-            MongoRule.unique({
-              modelName: "Task",
-            }),
           ],
         },
       }),
@@ -63,6 +60,64 @@ export default new NoreaAppRoutes({
           response.send(r);
         } catch (error) {
           response.status(500).json(error);
+        }
+      },
+    ]);
+
+    /**
+     * create user
+     */
+    app.route("/users").post([
+      Validator.validateRequest("body", {
+        name: {
+          type: "string",
+          required: true
+        },
+        email: {
+          type: "string",
+        }
+      }),
+      async (request: Request, response: Response) => {
+        try {
+          // load user
+          const user = new userModel({
+            name: request.body.name,
+            email: request.body.email,
+          });
+
+          await user.save();
+
+          return response.status(201).json(user);
+        } catch (error) {
+          return response.status(500).json(error);
+        }
+      },
+    ]);
+
+    /**
+     * Delete user
+     */
+    app.route("/users/:id").delete([
+      Validator.validateRequest("params", {
+        id: {
+          type: "string",
+          required: true,
+          rules: [MongoRule.validObjectId, MongoRule.exists("User", "_id")],
+        },
+      }),
+      async (request: Request, response: Response) => {
+        try {
+          // load user
+          const user = await userModel.findById(request.params.id);
+          if (user) {
+            await user.remove();
+
+            return response.status(204).send();
+          } else {
+            return response.status(404).send();
+          }
+        } catch (error) {
+          return response.status(500).json(error);
         }
       },
     ]);

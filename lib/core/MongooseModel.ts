@@ -23,6 +23,7 @@ import RequiredIfAll, {
 import RefValidation, {
   RefValidationFuncOptions,
 } from "../plugins/refValidation";
+import OnDelete, { OnDeleteFuncOptions } from "../plugins/onDelete";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
@@ -142,7 +143,7 @@ export type MoongooseModelParams<T extends Document> = {
    * Add globaly a plugin to a mongoose schema
    * https://mongoosejs.com/docs/plugins.html#global
    */
-  plugins?: (schema: Schema) => void;
+  plugins?: (schema: Schema<T>) => void;
 
   /**
    * Mongoose schema defining the model
@@ -198,7 +199,7 @@ export type MoongooseModelParams<T extends Document> = {
    *   }
    * ```
    */
-  externalConfig?: (schema: Schema) => void;
+  externalConfig?: (schema: Schema<T>) => void;
 
   /**
    * Define virtuals field
@@ -281,6 +282,11 @@ export type MoongooseModelParams<T extends Document> = {
    * Query global filters
    */
   postFilters?: GlobalFilter<T>;
+
+  /**
+   * On delete options
+   */
+  onDeleteOptions?: OnDeleteFuncOptions;
 };
 
 /**
@@ -385,6 +391,7 @@ export default function mongooseModel<T extends Document>(
   schema.plugin<RequiredIfFuncOptions>(RequiredIf, {});
   schema.plugin<RequiredIfAllFuncOptions>(RequiredIfAll, {});
   schema.plugin<RefValidationFuncOptions>(RefValidation, {});
+  schema.plugin<OnDeleteFuncOptions>(OnDelete, params.onDeleteOptions ?? {});
 
   /**
    * Apply global filters on post middleware

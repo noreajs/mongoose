@@ -14,6 +14,9 @@ export default mongooseModel<IUser>({
     deletedAt: true,
     overrideMethods: true,
   },
+  onDeleteOptions: {
+    action: "set_null",
+  },
   schema: new Schema(
     {
       name: {
@@ -21,7 +24,7 @@ export default mongooseModel<IUser>({
       },
       email: {
         type: Schema.Types.String,
-      }
+      },
     },
     {
       timestamps: true,

@@ -14,7 +14,7 @@ export declare type RequiredIfAllFuncOptions<T extends Document = any> = {
 
 /**
  * Project model from mass assignment
- * @param schema mongoose schem
+  * @param schema mongoose schem
  * @param options options
  */
 export default async function RequiredIfAll<T extends Document = any>(
