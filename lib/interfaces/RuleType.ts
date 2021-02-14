@@ -6,6 +6,7 @@ export type FieldType =
   | "bool"
   | "date"
   | "timestamp"
+  | "number"
   | "double"
   | "int"
   | "long"
