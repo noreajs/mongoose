@@ -109,6 +109,10 @@ type MoongooseModelParams<T extends Document> = {
     use$neOperator?: boolean;
     [key: string]: any;
   };
+  onDeleteOptions: {
+    action?: "cascade" | "restrict" | "set_null" // default "restrict";
+    errorCb?: HookErrorCallback;
+  };
   virtuals?: [
     {
       fieldName: string;
@@ -153,6 +157,7 @@ MoongooseModelParams<T> descriptions:
 | uniqueValidatorMessage | string | true | Expected \{PATH\} to be unique\. | Unique validator message You can pass through a custom error message as part of the optional options argument: You have access to all of the standard Mongoose error message templating: :\{PATH\}, \{VALUE\}, \{TYPE\} |
 | softDelete | boolean | true | false | Active soft delete on model |
 | softDeleteOptions | any | true |  | Soft delete options |
+| onDeleteOptions | any | true |  | On record delete options |
 | plugins | function | true | | Add globally a plugin to a mongoose schema |
 | schema | mongoose\.Schema | true | | Mongoose schema defining the model |
 | virtuals | array | true | | Define the virtual attributes of the model |
