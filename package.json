@@ -55,7 +55,7 @@
     }
   },
   "devDependencies": {
-    "@noreajs/core": "^2.0.0-0",
+    "@noreajs/core": "^2.0.4",
     "@types/express-session": "^1.17.3",
     "@types/mongoose": "^5.10.1",
     "express-session": "^1.17.1",
