@@ -1,5 +1,6 @@
 export type DataOriginType = "query" | "body" | "params";
 export type FieldType =
+  | "any"
   | "string"
   | "object"
   | "array"
@@ -12,10 +13,15 @@ export type FieldType =
   | "long"
   | "decimal";
 
-export interface FieldValidationOptions {
+export type ValidateOptions<BodyType = any> = {
+  [key in keyof BodyType]: FieldValidationOptions;
+};
+
+export interface FieldValidationOptions<Type = any> {
   type: FieldType | [FieldType, string];
   required?: boolean | string;
   rules?: RuleType[];
+  validator?: ValidateOptions<Type>;
 }
 
 export interface RuleType {
