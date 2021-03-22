@@ -45,7 +45,7 @@ export default function RequiredWithout<T extends Document = any>(
 
       if (element.requiredWithout) {
         // exits
-        const exists = [];
+        const exists:any[] = [];
 
         if (!Array.isArray(element.requiredWithout)) {
           element.requiredWithout = [element.requiredWithout];

@@ -1,5 +1,7 @@
 {
-    "include": ["lib/**/*"],
+    "include": [
+        "lib/**/*"
+    ],
     "compilerOptions": {
         "outDir": "dist",
         "target": "ES6",
@@ -7,6 +9,10 @@
         "esModuleInterop": true,
         "module": "commonjs",
         "noImplicitThis": false,
-        "declaration": true
+        "noImplicitAny": false,
+        "resolveJsonModule": true,
+        "noUnusedParameters": false,
+        "skipLibCheck": true,
+        "declaration": true,
     }
 }

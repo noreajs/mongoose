@@ -45,7 +45,7 @@ export default function RequiredWith<T extends Document = any>(
 
       if (element.requiredWith) {
         // exits
-        const exists = [];
+        const exists:any[] = [];
 
         if (!Array.isArray(element.requiredWith)) {
           element.requiredWith = [element.requiredWith];

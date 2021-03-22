@@ -1,6 +1,7 @@
 import { NoreaAppRoutes, Validator } from "@noreajs/core";
 import { Application, Request, Response } from "express";
 import { MongoRule } from "../validation/rules/MongoRule";
+import stepModel, { IStep } from "./models/step.model";
 import taskModel, { ITask } from "./models/task.model";
 import userModel from "./models/user.model";
 
@@ -18,6 +19,14 @@ export default new NoreaAppRoutes({
           email: "team@ovnicode.com",
         },
       });
+    });
+
+    /**
+     * Fetch steps
+     */
+    app.get("/steps", async (request: Request, response: Response) => {
+      const r = await stepModel.find({});
+      return response.send(r);
     });
 
     /**
@@ -44,19 +53,30 @@ export default new NoreaAppRoutes({
         user: {
           type: "string",
           required: true,
-          rules: [
-            MongoRule.validObjectId,
-            MongoRule.exists("User", "_id"),
-          ],
+          rules: [MongoRule.validObjectId, MongoRule.exists("User", "_id")],
         },
       }),
       async (request: Request, response: Response) => {
         try {
+          console.log("request.body.user", request.body.user);
           const r = await taskModel.create<Partial<ITask>>({
             user: request.body.user,
             name: request.body.name,
             description: request.body.description,
           });
+
+          //
+          await stepModel.create<Partial<IStep>>({
+            task: r._id,
+            title: `Step ${r._id}: this is not a number`,
+          });
+
+          await stepModel.create<Partial<IStep>>({
+            task: r._id,
+            title: `Step ${r._id}: this is not a number (bis)`,
+          });
+          // create steps
+
           response.send(r);
         } catch (error) {
           response.status(500).json(error);
@@ -71,11 +91,11 @@ export default new NoreaAppRoutes({
       Validator.validateRequest("body", {
         name: {
           type: "string",
-          required: true
+          required: true,
         },
         email: {
           type: "string",
-        }
+        },
       }),
       async (request: Request, response: Response) => {
         try {

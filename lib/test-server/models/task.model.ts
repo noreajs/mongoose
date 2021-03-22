@@ -17,9 +17,8 @@ export interface ITask extends SoftDeleteDocument {
 export default mongooseModel<ITask>({
   name: "Task",
   collection: "tasks",
-  softDeleteOptions: {
-    deletedAt: true,
-    overrideMethods: true,
+  onDeleteOptions: {
+    action: "cascade",
   },
   schema: new Schema(
     {

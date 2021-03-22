@@ -41,7 +41,7 @@ export default function RequiredWithAll<T extends Document = any>(
 
       if (element.requiredWithAll) {
         // exits
-        const exists = [];
+        const exists:any[] = [];
 
         if (!Array.isArray(element.requiredWithAll)) {
           element.requiredWithAll = [element.requiredWithAll];

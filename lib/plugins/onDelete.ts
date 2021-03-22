@@ -51,7 +51,7 @@ export default function OnDelete<T extends Document = any>(
           }
         }
       }
-
+      console.log("foreignHosts", foreignHosts);
       // init error
       var error: mongoose.NativeError | null = null;
 
@@ -89,7 +89,17 @@ export default function OnDelete<T extends Document = any>(
                 .find(filters)
                 .then(async (docs) => {
                   for (const record of docs) {
-                    await record.remove();
+                    // await record.remove();
+                    await mongoose
+                      .model(modelName)
+                      .findOneAndRemove(
+                        { _id: record._id },
+                        async function (err, path) {
+                          if (path) {
+                            await path.remove();
+                          }
+                        }
+                      );
                   }
                 })
                 .catch((err) => {

@@ -46,7 +46,7 @@ export default async function RequiredIf<T extends Document = any>(
 
       if (element.requiredIf) {
         // exits
-        const exists = [];
+        const exists:any = [];
 
         if (!Array.isArray(element.requiredIf)) {
           element.requiredIf = [element.requiredIf];

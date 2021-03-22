@@ -10,12 +10,8 @@ interface IUser extends SoftDeleteDocument {
 export default mongooseModel<IUser>({
   name: "User",
   collection: "users",
-  softDeleteOptions: {
-    deletedAt: true,
-    overrideMethods: true,
-  },
   onDeleteOptions: {
-    action: "set_null",
+    action: "cascade",
   },
   schema: new Schema(
     {
