@@ -51,7 +51,7 @@ export default function OnDelete<T extends Document = any>(
           }
         }
       }
-      console.log("foreignHosts", foreignHosts);
+      
       // init error
       var error: mongoose.NativeError | null = null;
 
