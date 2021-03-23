@@ -13,6 +13,7 @@ export interface IStep extends SoftDeleteDocument {
 export default mongooseModel<ITask>({
   name: "Step",
   collection: "steps",
+  softDelete: false,
   schema: new Schema(
     {
       task: {

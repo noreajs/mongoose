@@ -10,8 +10,10 @@ interface IUser extends SoftDeleteDocument {
 export default mongooseModel<IUser>({
   name: "User",
   collection: "users",
+  softDelete: false,
   onDeleteOptions: {
     action: "cascade",
+    log: true
   },
   schema: new Schema(
     {

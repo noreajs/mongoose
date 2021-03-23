@@ -22,6 +22,16 @@ export default new NoreaAppRoutes({
     });
 
     /**
+     * Clean
+     */
+    app.get("/clean", async (request: Request, response: Response) => {
+      await userModel.remove({});
+      await taskModel.remove({});
+      await stepModel.remove({});
+      return response.sendStatus(204);
+    });
+
+    /**
      * Fetch steps
      */
     app.get("/steps", async (request: Request, response: Response) => {

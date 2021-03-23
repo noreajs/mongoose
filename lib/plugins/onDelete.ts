@@ -7,6 +7,13 @@ export declare type OnDeleteFuncOptions<T extends Document = any> = {
   action?: "cascade" | "restrict" | "set_null";
 
   /**
+   * Display log
+   *
+   * @default false
+   */
+  log?: boolean;
+
+  /**
    * Error callback
    */
   errorCb?: HookErrorCallback;
@@ -51,7 +58,14 @@ export default function OnDelete<T extends Document = any>(
           }
         }
       }
-      
+
+      /**
+       * Log defails
+       */
+      if (options.log == true) {
+        console.log("onDelete: foreign hosts", foreignHosts);
+      }
+
       // init error
       var error: mongoose.NativeError | null = null;
 
@@ -82,6 +96,14 @@ export default function OnDelete<T extends Document = any>(
             .model(modelName)
             .find(filters)
             .countDocuments();
+            
+          /**
+           * Log defails
+           */
+          if (options.log == true) {
+            console.log(`onDelete: ${modelName} total match`, count);
+          }
+
           if (count !== 0) {
             try {
               await mongoose
@@ -89,7 +111,6 @@ export default function OnDelete<T extends Document = any>(
                 .find(filters)
                 .then(async (docs) => {
                   for (const record of docs) {
-                    // await record.remove();
                     await mongoose
                       .model(modelName)
                       .findOneAndRemove(
