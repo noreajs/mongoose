@@ -63,6 +63,7 @@ export default function OnDelete<T extends Document = any>(
        * Log defails
        */
       if (options.log == true) {
+        console.log("onDelete: model count", modelNames.length);
         console.log("onDelete: foreign hosts", foreignHosts);
       }
 
@@ -101,7 +102,12 @@ export default function OnDelete<T extends Document = any>(
            * Log defails
            */
           if (options.log == true) {
-            console.log(`onDelete: \`${modelName}\` total from \`${(this.constructor as any).modelName}\` match`, count);
+            console.log(
+              `onDelete: \`${modelName}\` total from \`${
+                (this.constructor as any).modelName
+              }\` match`,
+              count
+            );
           }
 
           if (count !== 0) {
