@@ -96,12 +96,12 @@ export default function OnDelete<T extends Document = any>(
             .model(modelName)
             .find(filters)
             .countDocuments();
-            
+
           /**
            * Log defails
            */
           if (options.log == true) {
-            console.log(`onDelete: ${modelName} total match`, count);
+            console.log(`onDelete: \`${modelName}\` total from \`${(this.constructor as any).modelName}\` match`, count);
           }
 
           if (count !== 0) {
