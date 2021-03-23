@@ -89,7 +89,7 @@ export default function OnDelete<T extends Document = any>(
            */
           if (options.log == true) {
             console.log(
-              `onDelete: cascade > \`${modelName}\` total from \`${
+              `onDelete: restrict > \`${modelName}\` total from \`${
                 (this.constructor as any).modelName
               }\` match`,
               count
