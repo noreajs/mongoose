@@ -83,6 +83,19 @@ export default function OnDelete<T extends Document = any>(
             .model(modelName)
             .find(filters)
             .countDocuments();
+
+          /**
+           * Log defails
+           */
+          if (options.log == true) {
+            console.log(
+              `onDelete: cascade > \`${modelName}\` total from \`${
+                (this.constructor as any).modelName
+              }\` match`,
+              count
+            );
+          }
+
           if (count !== 0) {
             mustBreak = true;
             // set error
@@ -103,7 +116,7 @@ export default function OnDelete<T extends Document = any>(
            */
           if (options.log == true) {
             console.log(
-              `onDelete: \`${modelName}\` total from \`${
+              `onDelete: cascade > \`${modelName}\` total from \`${
                 (this.constructor as any).modelName
               }\` match`,
               count
@@ -148,8 +161,8 @@ export default function OnDelete<T extends Document = any>(
                 message: error.message ?? `Failed to delete the record.`,
                 name: "ON DELETE CASCADE",
               };
+              break;
             }
-            break;
           }
         } else if (deleteAction === "set_null") {
           try {
