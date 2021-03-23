@@ -78,24 +78,25 @@ export default function OnDelete<T extends Document = any>(
         // break point
         var mustBreak = false;
 
+        // count documents
+        const count = await mongoose
+          .model(modelName)
+          .find(filters)
+          .countDocuments();
+
+        /**
+         * Log defails
+         */
+        if (options.log == true) {
+          console.log(
+            `onDelete: \`${modelName}\` total from \`${
+              (this.constructor as any).modelName
+            }\` match`,
+            count
+          );
+        }
+
         if (deleteAction === "restrict") {
-          const count = await mongoose
-            .model(modelName)
-            .find(filters)
-            .countDocuments();
-
-          /**
-           * Log defails
-           */
-          if (options.log == true) {
-            console.log(
-              `onDelete: restrict > \`${modelName}\` total from \`${
-                (this.constructor as any).modelName
-              }\` match`,
-              count
-            );
-          }
-
           if (count !== 0) {
             mustBreak = true;
             // set error
@@ -106,23 +107,6 @@ export default function OnDelete<T extends Document = any>(
             break;
           }
         } else if (deleteAction === "cascade") {
-          const count = await mongoose
-            .model(modelName)
-            .find(filters)
-            .countDocuments();
-
-          /**
-           * Log defails
-           */
-          if (options.log == true) {
-            console.log(
-              `onDelete: cascade > \`${modelName}\` total from \`${
-                (this.constructor as any).modelName
-              }\` match`,
-              count
-            );
-          }
-
           if (count !== 0) {
             try {
               await mongoose

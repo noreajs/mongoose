@@ -382,6 +382,13 @@ export default function mongooseModel<T extends Document>(
   }
 
   /**
+   * On delete behavior
+   */
+  if (params.onDeleteOptions) {
+    schema.plugin<OnDeleteFuncOptions>(OnDelete, params.onDeleteOptions);
+  }
+
+  /**
    * Native plugins
    */
   schema.plugin<RequiredWithFuncOptions>(RequiredWith, {});
@@ -391,7 +398,6 @@ export default function mongooseModel<T extends Document>(
   schema.plugin<RequiredIfFuncOptions>(RequiredIf, {});
   schema.plugin<RequiredIfAllFuncOptions>(RequiredIfAll, {});
   schema.plugin<RefValidationFuncOptions>(RefValidation, {});
-  schema.plugin<OnDeleteFuncOptions>(OnDelete, params.onDeleteOptions ?? {});
 
   /**
    * Apply global filters on post middleware
