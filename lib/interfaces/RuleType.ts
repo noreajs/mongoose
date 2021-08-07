@@ -1,3 +1,5 @@
+import { Request } from "express";
+
 export type DataOriginType = "query" | "body" | "params";
 export type FieldType =
   | "any"
@@ -32,13 +34,15 @@ export interface RuleType {
         field: string,
         origin: DataOriginType,
         options: FieldValidationOptions,
-        data: any
+        data: any,
+        request: Request
       ) => string | Promise<string>);
   validator: (
     value: any,
     field: string,
     origin: DataOriginType,
     options: FieldValidationOptions,
-    data: any
+    data: any,
+    request: Request
   ) => Promise<string | boolean> | string | boolean;
 }
