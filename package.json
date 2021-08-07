@@ -49,25 +49,18 @@
     "@types/mongoose": "^5.10.1",
     "@types/express-session": "^1.17.3",
     "mongoose": "^5.10.11",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1"
+    "express": "^4.17.1"
   },
   "peerDependenciesMeta": {
     "@types/mongoose": {
       "optional": true
     },
-    "@types/express-session": {
-      "optional": true
-    },
     "express": {
-      "optional": true
-    },
-    "express-session": {
       "optional": true
     }
   },
   "devDependencies": {
-    "@noreajs/core": "^2.0.4",
+    "@noreajs/core": "^2.0.5",
     "@types/express-session": "^1.17.3",
     "@types/mongoose": "^5.10.1",
     "express": "^4.17.1",
