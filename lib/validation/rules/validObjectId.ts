@@ -10,7 +10,11 @@ const validObjectIdRule: RuleType = {
   },
   validator: (value) => {
     try {
-      return ObjectId.isValid(value);
+      if (value !== null && value !== undefined && `${value}`.length !== 0) {
+        return ObjectId.isValid(value);
+      } else {
+        return true;
+      }
     } catch (error) {
       return error.message ?? false;
     }

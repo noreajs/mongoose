@@ -13,11 +13,15 @@ const existsRule = (modelName: string, modelField?: string): RuleType => {
     },
     validator: async (value, field) => {
       try {
-        // construct query
-        const query: any = {};
-        query[modelField ?? field] = value;
-        // the element exists
-        return (await mongoose.model(modelName).findOne(query)) !== null;
+        if (value !== null && value !== undefined && `${value}`.length !== 0) {
+          // construct query
+          const query: any = {};
+          query[modelField ?? field] = value;
+          // the element exists
+          return (await mongoose.model(modelName).findOne(query)) !== null;
+        } else {
+          return true;
+        }
       } catch (error) {
         return error.message ?? false;
       }
