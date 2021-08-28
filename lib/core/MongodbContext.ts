@@ -23,6 +23,21 @@ export type MongoDBContextParams = {
 };
 
 class MongoDBContext {
+  static syncIndexes: Map<
+    string,
+    {
+      enabled?: boolean;
+      options?: object | null | undefined;
+      callback?: (err: any) => void;
+    }
+  > = new Map<
+    string,
+    {
+      enabled?: boolean;
+      options?: object | null | undefined;
+      callback?: (err: any) => void;
+    }
+  >();
   constructor() {}
   /**
    * Initialize mongodb connection
@@ -48,8 +63,25 @@ class MongoDBContext {
      * Once connection openned
      */
     db.once("open", async function () {
-      console.log("We're connected on MongoDB!!");
-
+      try {
+        for (const modelName of MongoDBContext.syncIndexes.keys()) {
+          const options = MongoDBContext.syncIndexes.get(modelName);
+          if (options) {
+            if (options.enabled !== false) {
+              if (options.callback) {
+                db.models[modelName].syncIndexes(
+                  options.options,
+                  options.callback
+                );
+              } else {
+                db.models[modelName].syncIndexes(options.options);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Failed to synchronize indexes", error);
+      }
       // after connection
       if (params.onConnect) {
         await params.onConnect(db);

@@ -24,6 +24,7 @@ import RefValidation, {
   RefValidationFuncOptions,
 } from "../plugins/refValidation";
 import OnDelete, { OnDeleteFuncOptions } from "../plugins/onDelete";
+import MongoDBContext from "./MongoDBContext";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
@@ -440,16 +441,10 @@ export default function mongooseModel<T extends Document>(
   // create model
   const m = model<T>(params.name, schema, params.collection, params.skipInit);
 
-  // listen to mongoose db connection
-  connection.on("open", (err) => {
-    // synchronize index
-    if (params.syncIndexes !== false) {
-      if (params.syncIndexesCallback) {
-        m.syncIndexes(params.syncIndexesOptions, params.syncIndexesCallback);
-      } else {
-        m.syncIndexes(params.syncIndexesOptions);
-      }
-    }
+  MongoDBContext.syncIndexes.set(m.modelName, {
+    enabled: params.syncIndexes,
+    options: params.syncIndexesOptions,
+    callback: params.syncIndexesCallback,
   });
 
   // return the model
