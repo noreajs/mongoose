@@ -1,29 +1,29 @@
-import { Schema, model, Document, connection, Model } from "mongoose";
-import mongoosePaginate from "mongoose-paginate";
+import { Document, model, Schema } from "mongoose";
 import mongooseAutopopulate from "mongoose-autopopulate";
-import mongooseLeanVirtuals from "mongoose-lean-virtuals";
-import mongooseUniqueValidator from "mongoose-unique-validator";
 import mongooseDelete from "mongoose-delete";
-import protect, { ProtectFuncOptions } from "../plugins/protect";
-import privacy, { PrivacyFuncOptions } from "../plugins/privacy";
-import RequiredWith, { RequiredWithFuncOptions } from "../plugins/requiredWith";
-import RequiredIf, { RequiredIfFuncOptions } from "../plugins/requiredIf";
-import RequiredWithout, {
-  RequiredWithoutFuncOptions,
-} from "../plugins/requiredWithout";
-import RequiredWithAll, {
-  RequiredWithAllFuncOptions,
-} from "../plugins/requiredWithAll";
-import RequiredWithoutAll, {
-  RequiredWithoutAllFuncOptions,
-} from "../plugins/requiredWithoutAll";
-import RequiredIfAll, {
-  RequiredIfAllFuncOptions,
-} from "../plugins/requiredIfAll";
-import RefValidation, {
-  RefValidationFuncOptions,
-} from "../plugins/refValidation";
+import mongooseLeanVirtuals from "mongoose-lean-virtuals";
+import mongoosePaginate from "mongoose-paginate";
+import mongooseUniqueValidator from "mongoose-unique-validator";
 import OnDelete, { OnDeleteFuncOptions } from "../plugins/onDelete";
+import privacy, { PrivacyFuncOptions } from "../plugins/privacy";
+import protect, { ProtectFuncOptions } from "../plugins/protect";
+import RefValidation, {
+  RefValidationFuncOptions
+} from "../plugins/refValidation";
+import RequiredIf, { RequiredIfFuncOptions } from "../plugins/requiredIf";
+import RequiredIfAll, {
+  RequiredIfAllFuncOptions
+} from "../plugins/requiredIfAll";
+import RequiredWith, { RequiredWithFuncOptions } from "../plugins/requiredWith";
+import RequiredWithAll, {
+  RequiredWithAllFuncOptions
+} from "../plugins/requiredWithAll";
+import RequiredWithout, {
+  RequiredWithoutFuncOptions
+} from "../plugins/requiredWithout";
+import RequiredWithoutAll, {
+  RequiredWithoutAllFuncOptions
+} from "../plugins/requiredWithoutAll";
 import MongoDBContext from "./MongoDBContext";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");

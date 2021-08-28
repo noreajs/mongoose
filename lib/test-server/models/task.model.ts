@@ -1,6 +1,6 @@
-import { Document, Schema } from "mongoose";
-import mongooseModel from "../../core/MongooseModel";
+import { Schema } from "mongoose";
 import { SoftDeleteDocument } from "mongoose-delete";
+import mongooseModel from "../../core/MongooseModel";
 
 require("./user.model");
 
