@@ -63,6 +63,7 @@
     "@noreajs/core": "^2.0.5",
     "@types/express-session": "^1.17.3",
     "@types/mongoose": "^5.10.1",
+    "@types/node": "^16.7.4",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "mongoose": "^5.10.11",
