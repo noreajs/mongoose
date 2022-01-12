@@ -42,11 +42,11 @@ export default async function RequiredIf<T extends Document = any>(
    */
   for (const key in definitions) {
     if (Object.prototype.hasOwnProperty.call(definitions, key)) {
-      const element = definitions[key];
+      const element: any = definitions[key];
 
       if (element.requiredIf) {
         // exits
-        const exists:any = [];
+        const exists: any = [];
 
         if (!Array.isArray(element.requiredIf)) {
           element.requiredIf = [element.requiredIf];
@@ -77,41 +77,46 @@ export default async function RequiredIf<T extends Document = any>(
     }
   }
 
-  schema.pre(
-    "save",
-    async function (next) {
-      try {
-        const newObj = this.toJSON();
-        const error = new mongoose.Error.ValidationError(this);
+  schema.pre("save", async function (next) {
+    try {
+      const newObj = this.toJSON();
+      const error = new mongoose.Error.ValidationError();
 
-        for (const field of context.keys()) {
-          if (
-            (typeof newObj[field] !== "string" &&
-              (newObj[field] === null || newObj[field] === undefined)) ||
-            (typeof newObj[field] === "string" &&
-              `${newObj[field]}`.length === 0)
-          ) {
-            const rules = context.get(field);
-            for (const rule of rules ?? []) {
-              if (!await rule.validator(this as any)) {
-                error.addError(field, {
-                  message: rule.message ?? `\`${field}\` is required.`,
-                });
-              }
+      for (const field of context.keys()) {
+        if (
+          (typeof newObj[field] !== "string" &&
+            (newObj[field] === null || newObj[field] === undefined)) ||
+          (typeof newObj[field] === "string" && `${newObj[field]}`.length === 0)
+        ) {
+          const rules = context.get(field);
+          for (const rule of rules ?? []) {
+            if (!(await rule.validator(this as any))) {
+              error.addError(field, {
+                message: rule.message ?? `\`${field}\` is required.`,
+              } as any);
             }
           }
         }
-
-        // continue
-        if (Object.keys(error.errors).length !== 0) {
-          next(error);
-        } else {
-          next();
-        }
-      } catch (error) {
-        next(error);
       }
-    },
-    options.errorCb
-  );
+
+      // continue
+      if (Object.keys(error.errors).length !== 0) {
+        try {
+          if (options.errorCb) {
+            options.errorCb(error as any);
+          }
+        } catch (ignoredError) {}
+        next(error);
+      } else {
+        next();
+      }
+    } catch (error) {
+      try {
+        if (options.errorCb) {
+          options.errorCb(error as any);
+        }
+      } catch (ignoredError) {}
+      next(error as any);
+    }
+  });
 }

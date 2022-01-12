@@ -1,12 +1,12 @@
-import { Schema } from "mongoose";
-import { SoftDeleteDocument } from "mongoose-delete";
+import { Document, Schema } from "mongoose";
 import mongooseModel from "../../core/MongooseModel";
 
 require("./user.model");
 
-export interface ITask extends SoftDeleteDocument {
+export interface ITask extends Document {
   user: any;
   name: string;
+  title: string;
   description?: string;
   doubleName: string;
   createdAt: Date;
@@ -20,7 +20,7 @@ export default mongooseModel<ITask>({
   softDelete: false,
   onDeleteOptions: {
     action: "cascade",
-    log: true
+    log: true,
   },
   schema: new Schema(
     {
@@ -31,7 +31,7 @@ export default mongooseModel<ITask>({
       },
       name: {
         type: Schema.Types.String,
-        hidden: false,
+        hidden: true,
       },
       title: {
         type: Schema.Types.String,
@@ -39,6 +39,7 @@ export default mongooseModel<ITask>({
       description: {
         type: Schema.Types.String,
         massAssignable: false,
+        requiredWith: "user",
       },
     },
     {

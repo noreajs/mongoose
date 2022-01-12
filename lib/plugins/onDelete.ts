@@ -1,4 +1,4 @@
-import mongoose, { Document, HookErrorCallback, Model, Schema } from "mongoose";
+import mongoose, { Document, HookErrorCallback, Schema } from "mongoose";
 
 export declare type OnDeleteFuncOptions<T extends Document = any> = {
   /**
@@ -37,152 +37,157 @@ export default function OnDelete<T extends Document = any>(
   /**
    * Post delete
    */
-  schema.pre<T>(
-    "remove",
-    async function (next) {
-      // load dependencies
-      const modelNames = await mongoose.connection.modelNames();
-      // foreign hosts
-      const foreignHosts: [string, string][] = [];
-      // browse names
-      for (const modelName of modelNames) {
-        // schema definition
-        const definitions = mongoose.model(modelName).schema.obj;
-        for (const key in definitions) {
-          if (Object.prototype.hasOwnProperty.call(definitions, key)) {
-            const element = definitions[key];
-            if (element.ref === (this.constructor as any).modelName) {
-              foreignHosts.push([modelName, key]);
-              break;
-            }
+  schema.pre<T>("remove", async function (next) {
+    // load dependencies
+    const modelNames = await mongoose.connection.modelNames();
+    // foreign hosts
+    const foreignHosts: [string, string][] = [];
+    // browse names
+    for (const modelName of modelNames) {
+      // schema definition
+      const definitions = mongoose.model(modelName).schema.obj;
+      for (const key in definitions) {
+        if (Object.prototype.hasOwnProperty.call(definitions, key)) {
+          const element:any = definitions[key];
+          if (element.ref === (this.constructor as any).modelName) {
+            foreignHosts.push([modelName, key]);
+            break;
           }
         }
       }
+    }
+
+    /**
+     * Log defails
+     */
+    if (options.log == true) {
+      console.log("onDelete: model count", modelNames.length);
+      console.log("onDelete: foreign hosts", foreignHosts);
+    }
+
+    // init error
+    var error: mongoose.NativeError | null = null;
+
+    for (const [modelName, key] of foreignHosts) {
+      // filters
+      const filters: any = {};
+      // set filter
+      filters[key] = { $in: [this._id] };
+      // break point
+      var mustBreak = false;
+
+      // count documents
+      const count = await mongoose
+        .model(modelName)
+        .find(filters)
+        .countDocuments();
 
       /**
        * Log defails
        */
       if (options.log == true) {
-        console.log("onDelete: model count", modelNames.length);
-        console.log("onDelete: foreign hosts", foreignHosts);
+        console.log(
+          `onDelete: \`${modelName}\` total from \`${
+            (this.constructor as any).modelName
+          }\` match`,
+          count
+        );
       }
 
-      // init error
-      var error: mongoose.NativeError | null = null;
-
-      for (const [modelName, key] of foreignHosts) {
-        // filters
-        const filters: any = {};
-        // set filter
-        filters[key] = { $in: [this._id] };
-        // break point
-        var mustBreak = false;
-
-        // count documents
-        const count = await mongoose
-          .model(modelName)
-          .find(filters)
-          .countDocuments();
-
-        /**
-         * Log defails
-         */
-        if (options.log == true) {
-          console.log(
-            `onDelete: \`${modelName}\` total from \`${
-              (this.constructor as any).modelName
-            }\` match`,
-            count
-          );
+      if (deleteAction === "restrict") {
+        if (count !== 0) {
+          mustBreak = true;
+          // set error
+          error = {
+            message: `This record can't be deleted because one or many records in the model \`${modelName}\` depends on it.`,
+            name: "ON DELETE RESTRICT",
+          };
+          break;
         }
-
-        if (deleteAction === "restrict") {
-          if (count !== 0) {
-            mustBreak = true;
-            // set error
-            error = {
-              message: `This record can't be deleted because one or many records in the model \`${modelName}\` depends on it.`,
-              name: "ON DELETE RESTRICT",
-            };
-            break;
-          }
-        } else if (deleteAction === "cascade") {
-          if (count !== 0) {
-            try {
-              await mongoose
-                .model(modelName)
-                .find(filters)
-                .then(async (docs) => {
-                  for (const record of docs) {
-                    await mongoose
-                      .model(modelName)
-                      .findOneAndRemove(
-                        { _id: record._id },
-                        async function (err, path) {
-                          if (path) {
-                            await path.remove();
-                          }
-                        }
-                      );
-                  }
-                })
-                .catch((err) => {
-                  // force break
-                  mustBreak = true;
-                  // set error
-                  error = {
-                    message:
-                      err.message ??
-                      `Failed to load the dependent records in the model \`${modelName}\`.`,
-                    name: "ON DELETE CASCADE",
-                  };
-                });
-            } catch (error) {
-              // force break
-              mustBreak = true;
-              // set error
-              error = {
-                message: error.message ?? `Failed to delete the record.`,
-                name: "ON DELETE CASCADE",
-              };
-              break;
-            }
-          }
-        } else if (deleteAction === "set_null") {
+      } else if (deleteAction === "cascade") {
+        if (count !== 0) {
           try {
-            // changes
-            const changes: any = {};
-            // set filter
-            changes[key] = null;
-            // mass update
             await mongoose
               .model(modelName)
-              .updateMany(filters, {
-                $set: changes,
+              .find(filters)
+              .then(async (docs) => {
+                for (const record of docs) {
+                  await mongoose
+                    .model(modelName)
+                    .findOneAndRemove(
+                      { _id: record._id },
+                      async function (err, path) {
+                        if (path) {
+                          await path.remove();
+                        }
+                      }
+                    );
+                }
               })
-              .session(this.$session() ?? null);
+              .catch((err) => {
+                // force break
+                mustBreak = true;
+                // set error
+                error = {
+                  message:
+                    err.message ??
+                    `Failed to load the dependent records in the model \`${modelName}\`.`,
+                  name: "ON DELETE CASCADE",
+                };
+              });
           } catch (error) {
             // force break
             mustBreak = true;
             // set error
             error = {
-              message: error.message ?? `Failed to update dependent records.`,
-              name: "ON DELETE SET_NULL",
+              message: (error as any).message ?? `Failed to delete the record.`,
+              name: "ON DELETE CASCADE",
             };
+            break;
           }
         }
-
-        // break if asked
-        if (mustBreak) break;
+      } else if (deleteAction === "set_null") {
+        try {
+          // changes
+          const changes: any = {};
+          // set filter
+          changes[key] = null;
+          // mass update
+          await mongoose
+            .model(modelName)
+            .updateMany(filters, {
+              $set: changes,
+            })
+            .session(this.$session() ?? null);
+        } catch (error) {
+          // force break
+          mustBreak = true;
+          // set error
+          error = {
+            message:
+              (error as any).message ?? `Failed to update dependent records.`,
+            name: "ON DELETE SET_NULL",
+          };
+        }
       }
+
+      // break if asked
+      if (mustBreak) break;
+    }
+
+    // error exists
+    if (error) {
+      try {
+        if (options.errorCb) {
+          options.errorCb(error);
+        }
+      } catch (ignoredError) {}
 
       // continue
-      if (error) {
-        next(error);
-      } else {
-        next();
-      }
-    },
-    options.errorCb
-  );
+      next(error);
+    } else {
+      // continue
+      next();
+    }
+  });
 }

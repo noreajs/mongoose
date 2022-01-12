@@ -1,16 +1,15 @@
-import { Schema } from "mongoose";
-import { SoftDeleteDocument } from "mongoose-delete";
+import { Document, Schema } from "mongoose";
 import mongooseModel from "../../core/MongooseModel";
 import { ITask } from "./task.model";
 
 require("./task.model");
 
-export interface IStep extends SoftDeleteDocument {
+export interface IStep extends Document {
   task: ITask;
   title: string;
 }
 
-export default mongooseModel<ITask>({
+export default mongooseModel<IStep>({
   name: "Step",
   collection: "steps",
   softDelete: false,
@@ -19,7 +18,7 @@ export default mongooseModel<ITask>({
       task: {
         type: Schema.Types.ObjectId,
         ref: "Task",
-        required: [true, "The user is required"],
+        required: [true, "The user is required"]
       },
       title: {
         type: Schema.Types.String,
@@ -30,6 +29,6 @@ export default mongooseModel<ITask>({
       timestamps: true,
     }
   ),
-  plugins: function (schema: Schema<ITask>) {},
+  plugins: function (schema: Schema<IStep>) {},
   externalConfig: function (schema) {},
 });

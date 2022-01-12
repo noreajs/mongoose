@@ -1,8 +1,5 @@
 import {
-  Schema,
-  HookNextFunction,
-  HookErrorCallback,
-  Document,
+  Document, HookErrorCallback, HookNextFunction, Schema
 } from "mongoose";
 
 export declare type PrivacyFuncOptions<T extends Document = any> = {
@@ -45,7 +42,7 @@ export default function privacy<T extends Document = any>(
    */
   for (const key in definitions) {
     if (Object.prototype.hasOwnProperty.call(definitions, key)) {
-      const element = definitions[key];
+      const element:any = definitions[key];
       if (element.hidden === false) {
         visible.push(key);
       } else if (element.hidden === true) {
@@ -55,6 +52,8 @@ export default function privacy<T extends Document = any>(
       }
     }
   }
+
+  // console.log("hidden", hidden);
 
   /**
    * Check if a property is visible or not
@@ -94,10 +93,10 @@ export default function privacy<T extends Document = any>(
           }
         }
       }
-      
+      // console.log("docs", docs);
       next();
     } catch (error) {
-      next(error);
+      next(error as any);
     }
   }
 

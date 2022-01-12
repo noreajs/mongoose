@@ -27,14 +27,14 @@ class MongoDBContext {
     string,
     {
       enabled?: boolean;
-      options?: object | null | undefined;
+      options?: Record<string, any>;
       callback?: (err: any) => void;
     }
   > = new Map<
     string,
     {
       enabled?: boolean;
-      options?: object | null | undefined;
+      options?: Record<string, any>;
       callback?: (err: any) => void;
     }
   >();
@@ -70,7 +70,7 @@ class MongoDBContext {
             if (options.enabled !== false) {
               if (options.callback) {
                 db.models[modelName].syncIndexes(
-                  options.options,
+                  options.options ?? null,
                   options.callback
                 );
               } else {
@@ -90,15 +90,7 @@ class MongoDBContext {
 
     try {
       // trigger connection
-      await connect(
-        params.connectionUrl,
-        params.options || {
-          useCreateIndex: true,
-          useNewUrlParser: true,
-          useFindAndModify: false,
-          useUnifiedTopology: true,
-        }
-      );
+      await connect(params.connectionUrl, params.options);
     } catch (error) {
       if (params.onError) {
         await params.onError(db, error);

@@ -1,8 +1,7 @@
-import { Schema } from "mongoose";
+import { Document, Schema } from "mongoose";
 import mongooseModel from "../../core/MongooseModel";
-import { SoftDeleteDocument } from "mongoose-delete";
 
-interface IUser extends SoftDeleteDocument {
+interface IUser extends Document {
   name: string;
   email: string;
 }

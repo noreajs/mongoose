@@ -7,28 +7,18 @@ import mongooseUniqueValidator from "mongoose-unique-validator";
 import OnDelete, { OnDeleteFuncOptions } from "../plugins/onDelete";
 import privacy, { PrivacyFuncOptions } from "../plugins/privacy";
 import protect, { ProtectFuncOptions } from "../plugins/protect";
-import RefValidation, {
-  RefValidationFuncOptions
-} from "../plugins/refValidation";
-import RequiredIf, { RequiredIfFuncOptions } from "../plugins/requiredIf";
-import RequiredIfAll, {
-  RequiredIfAllFuncOptions
-} from "../plugins/requiredIfAll";
-import RequiredWith, { RequiredWithFuncOptions } from "../plugins/requiredWith";
-import RequiredWithAll, {
-  RequiredWithAllFuncOptions
-} from "../plugins/requiredWithAll";
-import RequiredWithout, {
-  RequiredWithoutFuncOptions
-} from "../plugins/requiredWithout";
-import RequiredWithoutAll, {
-  RequiredWithoutAllFuncOptions
-} from "../plugins/requiredWithoutAll";
+import RefValidation from "../plugins/refValidation";
+import RequiredIf from "../plugins/requiredIf";
+import RequiredIfAll from "../plugins/requiredIfAll";
+import RequiredWith from "../plugins/requiredWith";
+import RequiredWithAll from "../plugins/requiredWithAll";
+import RequiredWithout from "../plugins/requiredWithout";
+import RequiredWithoutAll from "../plugins/requiredWithoutAll";
 import MongoDBContext from "./MongoDBContext";
 
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
-export type QueryMethod = "find" | "findOne" | "findById" | string;
+export type QueryMethod = string;
 
 export type GlobalFilter<T extends Document> = {
   [key in QueryMethod]?: (docs: T[]) => void;
@@ -161,7 +151,7 @@ export type MoongooseModelParams<T extends Document> = {
   /**
    * syncIndexes options to pass to ensureIndexes()
    */
-  syncIndexesOptions?: object | null | undefined;
+  syncIndexesOptions?: Record<string, any>;
 
   /**
    * syncIndexes optional callback
@@ -371,34 +361,30 @@ export default function mongooseModel<T extends Document>(
   /**
    * Apply protect
    */
-  if (!!params.protectOptions) {
-    schema.plugin(protect, params.protectOptions);
-  }
+  schema.plugin(protect, params.protectOptions ?? {});
 
   /**
    * Apply privacy
    */
-  if (!!params.privacyOptions) {
-    schema.plugin(privacy, params.privacyOptions);
-  }
+  schema.plugin(privacy, params.privacyOptions ?? {});
 
   /**
    * On delete behavior
    */
   if (params.onDeleteOptions) {
-    schema.plugin<OnDeleteFuncOptions>(OnDelete, params.onDeleteOptions);
+    schema.plugin(OnDelete, params.onDeleteOptions);
   }
 
   /**
    * Native plugins
    */
-  schema.plugin<RequiredWithFuncOptions>(RequiredWith, {});
-  schema.plugin<RequiredWithAllFuncOptions>(RequiredWithAll, {});
-  schema.plugin<RequiredWithoutFuncOptions>(RequiredWithout, {});
-  schema.plugin<RequiredWithoutAllFuncOptions>(RequiredWithoutAll, {});
-  schema.plugin<RequiredIfFuncOptions>(RequiredIf, {});
-  schema.plugin<RequiredIfAllFuncOptions>(RequiredIfAll, {});
-  schema.plugin<RefValidationFuncOptions>(RefValidation, {});
+  schema.plugin(RequiredWith, {});
+  schema.plugin(RequiredWithAll, {});
+  schema.plugin(RequiredWithout, {});
+  schema.plugin(RequiredWithoutAll, {});
+  schema.plugin(RequiredIf, {});
+  schema.plugin(RequiredIfAll, {});
+  schema.plugin(RefValidation, {});
 
   /**
    * Apply global filters on post middleware
@@ -412,7 +398,7 @@ export default function mongooseModel<T extends Document>(
 
         if (method) {
           // define post event
-          schema.post<T>(key, function (docs: any, next) {
+          schema.post<T>(key as any, function (docs: any, next) {
             if (!Array.isArray(docs)) {
               docs = [docs];
             }

@@ -1,8 +1,5 @@
 import {
-  Schema,
-  HookNextFunction,
-  HookErrorCallback,
-  Document,
+  Document, HookErrorCallback, HookNextFunction, Schema
 } from "mongoose";
 
 export declare type ProtectFuncOptions<T extends Document = any> = {
@@ -45,7 +42,7 @@ export default function protect<T extends Document = any>(
    */
   for (const key in definitions) {
     if (Object.prototype.hasOwnProperty.call(definitions, key)) {
-      const element = definitions[key];
+      const element: any = definitions[key];
       if (element.massAssignable === true) {
         fillable.push(key);
       } else if (element.massAssignable === false) {
@@ -90,7 +87,7 @@ export default function protect<T extends Document = any>(
       }
       next();
     } catch (error) {
-      next(error);
+      next(error as any);
     }
   }
 
@@ -140,20 +137,21 @@ export default function protect<T extends Document = any>(
   /**
    * Mass update
    */
-  schema.pre(
-    "updateMany",
-    function (next) {
+  schema.pre("updateMany", function (next) {
+    try {
+      // apply update method filter
+      updateMethodsFilter(this.getUpdate());
+      // continue
+      next();
+    } catch (error) {
       try {
-        // apply update method filter
-        updateMethodsFilter(this.getUpdate());
-        // continue
-        next();
-      } catch (error) {
-        next(error);
-      }
-    },
-    options.errorCb
-  );
+        if (options.errorCb) {
+          options.errorCb(error as any);
+        }
+      } catch (ignoredError) {}
+      next(error as any);
+    }
+  });
 
   // schema.pre(
   //   "update",
@@ -188,18 +186,19 @@ export default function protect<T extends Document = any>(
   /**
    * Mass insert
    */
-  schema.pre(
-    "insertMany",
-    function (next, docs) {
+  schema.pre("insertMany", function (next, docs) {
+    try {
+      // apply update method filter
+      applyFilter(docs, next);
+      // continue
+      next();
+    } catch (error) {
       try {
-        // apply update method filter
-        applyFilter(docs, next);
-        // continue
-        next();
-      } catch (error) {
-        next(error);
-      }
-    },
-    options.errorCb
-  );
+        if (options.errorCb) {
+          options.errorCb(error as any);
+        }
+      } catch (ignoredError) {}
+      next(error as any);
+    }
+  });
 }

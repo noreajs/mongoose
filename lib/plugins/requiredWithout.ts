@@ -1,8 +1,4 @@
-import mongoose, {
-  Schema,
-  HookErrorCallback,
-  Document,
-} from "mongoose";
+import mongoose, { Document, HookErrorCallback, Schema } from "mongoose";
 
 export declare type RequiredWithoutFuncOptions = {
   /**
@@ -41,11 +37,11 @@ export default function RequiredWithout<T extends Document = any>(
    */
   for (const key in definitions) {
     if (Object.prototype.hasOwnProperty.call(definitions, key)) {
-      const element = definitions[key];
+      const element: any = definitions[key];
 
       if (element.requiredWithout) {
         // exits
-        const exists:any[] = [];
+        const exists: any[] = [];
 
         if (!Array.isArray(element.requiredWithout)) {
           element.requiredWithout = [element.requiredWithout];
@@ -72,46 +68,51 @@ export default function RequiredWithout<T extends Document = any>(
     }
   }
 
-  schema.pre(
-    "save",
-    function (next) {
-      try {
-        const newObj = this.toJSON();
-        const error = new mongoose.Error.ValidationError(this);
+  schema.pre("save", function (next) {
+    try {
+      const newObj = this.toJSON();
+      const error = new mongoose.Error.ValidationError();
 
-        for (const field of context.keys()) {
-          if (
-            (typeof newObj[field] !== "string" &&
-              (newObj[field] === null || newObj[field] === undefined)) ||
-            (typeof newObj[field] === "string" &&
-              `${newObj[field]}`.length === 0)
-          ) {
-            const targets = context.get(field);
-            for (const target of targets ?? []) {
-              if (
-                ((newObj[target] === null || newObj[target] === undefined) &&
-                  typeof newObj[target] !== "string") ||
-                (typeof newObj[target] === "string" &&
-                  `${newObj[target]}`.length === 0)
-              ) {
-                error.addError(field, {
-                  message: `\`${field}\` is required when \`${target}\` is missing.`,
-                });
-              }
+      for (const field of context.keys()) {
+        if (
+          (typeof newObj[field] !== "string" &&
+            (newObj[field] === null || newObj[field] === undefined)) ||
+          (typeof newObj[field] === "string" && `${newObj[field]}`.length === 0)
+        ) {
+          const targets = context.get(field);
+          for (const target of targets ?? []) {
+            if (
+              ((newObj[target] === null || newObj[target] === undefined) &&
+                typeof newObj[target] !== "string") ||
+              (typeof newObj[target] === "string" &&
+                `${newObj[target]}`.length === 0)
+            ) {
+              error.addError(field, {
+                message: `\`${field}\` is required when \`${target}\` is missing.`,
+              } as any);
             }
           }
         }
-
-        // continue
-        if (Object.keys(error.errors).length !== 0) {
-          next(error);
-        } else {
-          next();
-        }
-      } catch (error) {
-        next(error);
       }
-    },
-    options.errorCb
-  );
+
+      // continue
+      if (Object.keys(error.errors).length !== 0) {
+        try {
+          if (options.errorCb) {
+            options.errorCb(error as any);
+          }
+        } catch (ignoredError) {}
+        next(error as any);
+      } else {
+        next();
+      }
+    } catch (error) {
+      try {
+        if (options.errorCb) {
+          options.errorCb(error as any);
+        }
+      } catch (ignoredError) {}
+      next(error as any);
+    }
+  });
 }

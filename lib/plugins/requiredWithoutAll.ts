@@ -37,11 +37,11 @@ export default function RequiredWithoutAll<T extends Document = any>(
    */
   for (const key in definitions) {
     if (Object.prototype.hasOwnProperty.call(definitions, key)) {
-      const element = definitions[key];
+      const element: any = definitions[key];
 
       if (element.requiredWithoutAll) {
         // exits
-        const exists:any[] = [];
+        const exists: any[] = [];
 
         if (!Array.isArray(element.requiredWithoutAll)) {
           element.requiredWithoutAll = [element.requiredWithoutAll];
@@ -68,60 +68,65 @@ export default function RequiredWithoutAll<T extends Document = any>(
     }
   }
 
-  schema.pre(
-    "save",
-    function (next) {
-      try {
-        const newObj = this.toJSON();
-        const error = new mongoose.Error.ValidationError(this);
+  schema.pre("save", function (next) {
+    try {
+      const newObj = this.toJSON();
+      const error = new mongoose.Error.ValidationError();
 
-        for (const field of context.keys()) {
-          if (
-            (typeof newObj[field] !== "string" &&
-              (newObj[field] === null || newObj[field] === undefined)) ||
-            (typeof newObj[field] === "string" &&
-              `${newObj[field]}`.length === 0)
-          ) {
-            const targets = context.get(field);
+      for (const field of context.keys()) {
+        if (
+          (typeof newObj[field] !== "string" &&
+            (newObj[field] === null || newObj[field] === undefined)) ||
+          (typeof newObj[field] === "string" && `${newObj[field]}`.length === 0)
+        ) {
+          const targets = context.get(field);
 
-            // undefined targets count
-            var match = 0;
+          // undefined targets count
+          var match = 0;
 
-            for (const target of targets ?? []) {
-              if (
-                ((newObj[target] === null || newObj[target] === undefined) &&
-                  typeof newObj[target] !== "string") ||
-                (typeof newObj[target] === "string" &&
-                  `${newObj[target]}`.length === 0)
-              ) {
-                match += 1;
-              }
-            }
-
-            if (match === (targets ?? []).length) {
-              error.addError(field, {
-                message: `\`${field}\` is required when ${(targets ?? [])
-                  .map((t) => `\`${t}\``)
-                  .join(", ")} ${
-                  (targets ?? []).length > 1
-                    ? "are not present"
-                    : "is not present"
-                }`,
-              });
+          for (const target of targets ?? []) {
+            if (
+              ((newObj[target] === null || newObj[target] === undefined) &&
+                typeof newObj[target] !== "string") ||
+              (typeof newObj[target] === "string" &&
+                `${newObj[target]}`.length === 0)
+            ) {
+              match += 1;
             }
           }
-        }
 
-        // continue
-        if (Object.keys(error.errors).length !== 0) {
-          next(error);
-        } else {
-          next();
+          if (match === (targets ?? []).length) {
+            error.addError(field, {
+              message: `\`${field}\` is required when ${(targets ?? [])
+                .map((t) => `\`${t}\``)
+                .join(", ")} ${
+                (targets ?? []).length > 1
+                  ? "are not present"
+                  : "is not present"
+              }`,
+            } as any);
+          }
         }
-      } catch (error) {
-        next(error);
       }
-    },
-    options.errorCb
-  );
+
+      // continue
+      if (Object.keys(error.errors).length !== 0) {
+        try {
+          if (options.errorCb) {
+            options.errorCb(error as any);
+          }
+        } catch (ignoredError) {}
+        next(error as any);
+      } else {
+        next();
+      }
+    } catch (error) {
+      try {
+        if (options.errorCb) {
+          options.errorCb(error as any);
+        }
+      } catch (ignoredError) {}
+      next(error as any);
+    }
+  });
 }
