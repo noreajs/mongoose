@@ -23,7 +23,7 @@ const existsRule = (modelName: string, modelField?: string): RuleType => {
           return true;
         }
       } catch (error) {
-        return error.message ?? false;
+        return (error as any).message ?? false;
       }
     },
   };

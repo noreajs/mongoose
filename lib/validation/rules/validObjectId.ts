@@ -16,7 +16,7 @@ const validObjectIdRule: RuleType = {
         return true;
       }
     } catch (error) {
-      return error.message ?? false;
+      return (error as any).message ?? false;
     }
   },
 };

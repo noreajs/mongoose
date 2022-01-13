@@ -13,6 +13,6 @@
         "resolveJsonModule": true,
         "noUnusedParameters": false,
         "skipLibCheck": true,
-        "declaration": true,
+        "declaration": true
     }
 }

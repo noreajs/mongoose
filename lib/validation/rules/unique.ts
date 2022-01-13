@@ -76,7 +76,7 @@ function uniqueRule<T extends mongoose.Document = any>(
           return true;
         }
       } catch (error) {
-        return error.message ?? false;
+        return (error as any).message ?? false;
       }
     },
   };

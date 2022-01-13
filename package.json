@@ -44,10 +44,9 @@
     "@types/express-session": "^1.17.3",
     "@types/mongoose-delete": "^0.5.8",
     "@types/mongoose-lean-virtuals": "^0.5.2",
-    "@types/mongoose-paginate": "^5.0.11",
     "@types/mongoose-unique-validator": "^1.0.5",
     "express": "^4.17.1",
-    "mongoose": "^5.10.11"
+    "mongoose": "^6.1.6"
   },
   "peerDependenciesMeta": {
     "@types/express-session": {
@@ -74,15 +73,14 @@
     "@types/express-session": "^1.17.3",
     "@types/mongoose-delete": "^0.5.8",
     "@types/mongoose-lean-virtuals": "^0.5.2",
-    "@types/mongoose-paginate": "^5.0.11",
     "@types/mongoose-unique-validator": "^1.0.5",
     "@types/node": "^17.0.8",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "mongoose": "^6.1.6",
     "nodemon": "^2.0.4",
-    "ts-node": "^8.10.2",
+    "ts-node": "^10.4.0",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.4"
+    "typescript": "^4.5.4"
   }
 }
