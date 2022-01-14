@@ -5,11 +5,20 @@ import { RuleType } from "../../interfaces/RuleType";
  * Verify if a value exist in a model
  * @param modelName mongodb model
  * @param modelField model field
+ * @param message custom error message
  */
-const existsRule = (modelName: string, modelField?: string): RuleType => {
+const existsRule = (
+  modelName: string,
+  modelField?: string,
+  message?: string
+): RuleType => {
   return {
-    message: (_value, field) => {
-      return `\`${field}\` value must exists in the model \`${modelName}\``;
+    message: (value, field) => {
+      if (typeof message === "string") {
+        return message.replace(new RegExp("{{value}}", "g"), value);
+      } else {
+        return `\`${field}\` value must exists in the model \`${modelName}\``;
+      }
     },
     validator: async (value, field) => {
       try {

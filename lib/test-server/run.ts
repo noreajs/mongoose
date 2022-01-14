@@ -11,6 +11,9 @@ const app = new NoreaApp(apiRoutes, {
     // Get MongoDB Instance
     MongoDBContext.init({
       connectionUrl: `mongodb://127.0.0.1:27017/noreajs_mongoose_db?compressors=zlib`,
+      onConnect: () => {
+        console.log("we are connected on mongodb");
+      },
     });
   },
   afterStart: (app, server, port) => {

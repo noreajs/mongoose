@@ -1,9 +1,6 @@
 import { Document, model, Schema } from "mongoose";
 import mongooseAutopopulate from "mongoose-autopopulate";
 import mongooseDelete from "mongoose-delete";
-import mongooseLeanVirtuals from "mongoose-lean-virtuals";
-import mongoosePaginate from "mongoose-paginate";
-import mongooseUniqueValidator from "mongoose-unique-validator";
 import OnDelete, { OnDeleteFuncOptions } from "../plugins/onDelete";
 import privacy, { PrivacyFuncOptions } from "../plugins/privacy";
 import protect, { ProtectFuncOptions } from "../plugins/protect";
@@ -16,6 +13,9 @@ import RequiredWithout from "../plugins/requiredWithout";
 import RequiredWithoutAll from "../plugins/requiredWithoutAll";
 import MongoDBContext from "./MongoDBContext";
 
+const mongooseLeanVirtuals = require("mongoose-lean-virtuals");
+const mongoosePaginate = require("mongoose-paginate");
+const mongooseUniqueValidator = require("mongoose-unique-validator");
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 export type QueryMethod = string;

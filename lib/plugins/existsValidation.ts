@@ -1,9 +1,7 @@
 import {
-  Schema,
-  HookNextFunction,
-  HookErrorCallback,
-  Document,
+  Document, Schema
 } from "mongoose";
+import HookErrorCallback from "../interfaces/HookErrorCallback";
 
 export declare type ExistsValidationFuncOptions<T extends Document = any> = {
   /**

@@ -1,4 +1,5 @@
-import mongoose, { Schema, HookErrorCallback, Document } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
+import HookErrorCallback from "../interfaces/HookErrorCallback";
 
 export declare type RequiredWithoutAllFuncOptions = {
   /**

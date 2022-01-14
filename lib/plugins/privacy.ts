@@ -1,6 +1,6 @@
-import {
-  Document, HookErrorCallback, HookNextFunction, Schema
-} from "mongoose";
+import { Document, Schema } from "mongoose";
+import HookErrorCallback from "../interfaces/HookErrorCallback";
+import HookNextFunction from "../interfaces/HookNextFunction";
 
 export declare type PrivacyFuncOptions<T extends Document = any> = {
   /**
@@ -42,7 +42,7 @@ export default function privacy<T extends Document = any>(
    */
   for (const key in definitions) {
     if (Object.prototype.hasOwnProperty.call(definitions, key)) {
-      const element:any = definitions[key];
+      const element: any = definitions[key];
       if (element.hidden === false) {
         visible.push(key);
       } else if (element.hidden === true) {
@@ -85,10 +85,15 @@ export default function privacy<T extends Document = any>(
           }
         }
 
-        for (const key in doc._doc) {
-          if (Object.prototype.hasOwnProperty.call(doc._doc, key)) {
-            if (!isVisibleKey(key)) {
-              delete doc._doc[key];
+        /**
+         * _doc is defined
+         */
+        if (doc._doc) {
+          for (const key in doc._doc) {
+            if (Object.prototype.hasOwnProperty.call(doc._doc, key)) {
+              if (!isVisibleKey(key)) {
+                delete doc._doc[key];
+              }
             }
           }
         }
@@ -103,11 +108,12 @@ export default function privacy<T extends Document = any>(
   /**
    * Filtering data
    */
-  schema.post(["find", "findOne", "findById"] as any, function (
-    docs,
-    next: any
-  ) {
+  schema.post(["find", "findOne", "findById"] as any, function (docs, next) {
     // apply filter
-    applyFilter(docs, next);
+    if (docs) {
+      applyFilter(docs, next);
+    } else {
+      next();
+    }
   });
 }

@@ -1,7 +1,8 @@
 import colors from "colors";
 import mongoose, {
-  Document, HookErrorCallback, Schema
+  Document, Schema
 } from "mongoose";
+import HookErrorCallback from "../interfaces/HookErrorCallback";
 
 
 export declare type RefValidationFuncOptions<T extends Document = any> = {

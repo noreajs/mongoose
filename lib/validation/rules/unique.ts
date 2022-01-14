@@ -15,7 +15,12 @@ interface UniqueRuleOptions<T extends mongoose.Document> {
   /**
    * Value to ignore or mongoose filter query
    */
-  ignore?: string | mongoose.MongooseFilterQuery<Pick<T, "_id">>;
+  ignore?: string | mongoose.FilterQuery<Pick<T, "_id">>;
+
+  /**
+   * Custom error message
+   */
+  message?: string;
 }
 
 /**
@@ -27,9 +32,16 @@ function uniqueRule<T extends mongoose.Document = any>(
 ): RuleType {
   return {
     message: (value, field) => {
-      return `A record with \`${value}\` as \`${
-        options.field ?? field
-      }\` value already exists in the ${options.modelName} model`;
+      if (typeof options.message === "string") {
+        return options.message.replace(new RegExp("{{value}}", "g"), value);
+      } else {
+        return (
+          options.message ??
+          `A record with \`${value}\` as \`${
+            options.field ?? field
+          }\` value already exists in the ${options.modelName} model`
+        );
+      }
     },
     validator: async (value, field) => {
       try {

@@ -1,4 +1,5 @@
-import mongoose, { Document, HookErrorCallback, Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
+import HookErrorCallback from "../interfaces/HookErrorCallback";
 
 export declare type OnDeleteFuncOptions<T extends Document = any> = {
   /**
@@ -48,7 +49,7 @@ export default function OnDelete<T extends Document = any>(
       const definitions = mongoose.model(modelName).schema.obj;
       for (const key in definitions) {
         if (Object.prototype.hasOwnProperty.call(definitions, key)) {
-          const element:any = definitions[key];
+          const element: any = definitions[key];
           if (element.ref === (this.constructor as any).modelName) {
             foreignHosts.push([modelName, key]);
             break;
@@ -61,7 +62,7 @@ export default function OnDelete<T extends Document = any>(
      * Log defails
      */
     if (options.log == true) {
-      console.log("onDelete: model count", modelNames.length);
+      console.log("onDelete: mongoose model count", modelNames.length);
       console.log("onDelete: foreign hosts", foreignHosts);
     }
 
@@ -114,14 +115,7 @@ export default function OnDelete<T extends Document = any>(
                 for (const record of docs) {
                   await mongoose
                     .model(modelName)
-                    .findOneAndRemove(
-                      { _id: record._id },
-                      async function (err, path) {
-                        if (path) {
-                          await path.remove();
-                        }
-                      }
-                    );
+                    .findOneAndRemove({ _id: record._id });
                 }
               })
               .catch((err) => {
@@ -135,13 +129,14 @@ export default function OnDelete<T extends Document = any>(
                   name: "ON DELETE CASCADE",
                 };
               });
-          } catch (error) {
+          } catch (e) {
             // force break
             mustBreak = true;
             // set error
             error = {
-              message: (error as any).message ?? `Failed to delete the record.`,
+              message: (e as any).message ?? `Failed to delete the record.`,
               name: "ON DELETE CASCADE",
+              stack: (e as any).stack,
             };
             break;
           }

@@ -1,4 +1,4 @@
-import { ConnectionOptions, connection, connect, Connection } from "mongoose";
+import { connection, connect, Connection } from "mongoose";
 
 export type MongoDBContextParams = {
   /**
@@ -9,7 +9,7 @@ export type MongoDBContextParams = {
   /**
    * MongoDB connection options
    */
-  options?: ConnectionOptions;
+  options?: any;
 
   /**
    * Method to be executed when the connection to MongoDB has been etablished
@@ -90,10 +90,18 @@ class MongoDBContext {
 
     try {
       // trigger connection
-      await connect(params.connectionUrl, params.options);
+      await connect(params.connectionUrl, params.options, (error) => {
+        if (params.onError) {
+          try {
+            params.onError(db, error);
+          } catch (ignoredError) {}
+        }
+      });
     } catch (error) {
       if (params.onError) {
-        await params.onError(db, error);
+        try {
+          await params.onError(db, error);
+        } catch (ignoredError) {}
       }
     }
   }

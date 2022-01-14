@@ -1,6 +1,8 @@
 import {
-  Document, HookErrorCallback, HookNextFunction, Schema
+  Document, Schema
 } from "mongoose";
+import HookErrorCallback from "../interfaces/HookErrorCallback";
+import HookNextFunction from "../interfaces/HookNextFunction";
 
 export declare type ProtectFuncOptions<T extends Document = any> = {
   /**

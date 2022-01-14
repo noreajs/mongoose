@@ -69,19 +69,19 @@ export default new NoreaAppRoutes({
       async (request: Request, response: Response) => {
         try {
           console.log("request.body.user", request.body.user);
-          const r = await taskModel.create<Partial<ITask>>({
+          const r = await taskModel.create({
             user: request.body.user,
             name: request.body.name,
             description: request.body.description,
           });
 
           //
-          await stepModel.create<Partial<IStep>>({
+          await stepModel.create({
             task: r._id,
             title: `Step ${r._id}: this is not a number`,
           });
 
-          await stepModel.create<Partial<IStep>>({
+          await stepModel.create({
             task: r._id,
             title: `Step ${r._id}: this is not a number (bis)`,
           });
@@ -105,6 +105,13 @@ export default new NoreaAppRoutes({
         },
         email: {
           type: "string",
+          rules: [
+            MongoRule.unique({
+              modelName: "User",
+              field: "email",
+              message: `This email \`{{value}}\` address is already taken. Do not use the email \`{{value}}\` again please, save my day`,
+            }),
+          ],
         },
       }),
       async (request: Request, response: Response) => {
@@ -132,7 +139,14 @@ export default new NoreaAppRoutes({
         id: {
           type: "string",
           required: true,
-          rules: [MongoRule.validObjectId, MongoRule.exists("User", "_id")],
+          rules: [
+            MongoRule.validObjectId,
+            MongoRule.exists(
+              "User",
+              "_id",
+              "The given user identifier doesn't exists"
+            ),
+          ],
         },
       }),
       async (request: Request, response: Response) => {
