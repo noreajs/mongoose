@@ -15,7 +15,9 @@ const existsRule = (
   return {
     message: (value, field) => {
       if (typeof message === "string") {
-        return message.replace(new RegExp("{{value}}", "g"), value);
+        return message
+          .replace(new RegExp("{{value}}", "g"), value)
+          .replace(new RegExp("{{field}}", "g"), field);
       } else {
         return `\`${field}\` value must exists in the model \`${modelName}\``;
       }
