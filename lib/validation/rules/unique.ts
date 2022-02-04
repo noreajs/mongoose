@@ -13,9 +13,14 @@ interface UniqueRuleOptions<T extends mongoose.Document> {
   field?: string;
 
   /**
-   * Value to ignore or mongoose filter query
+   * Filter query
    */
-  ignore?: string | mongoose.FilterQuery<Pick<T, "_id">>;
+  filter?: mongoose.FilterQuery<Pick<T, "_id">>;
+
+  /**
+   * Values to ignore
+   */
+  ignore?: string | string[];
 
   /**
    * Custom error message
@@ -60,26 +65,24 @@ function uniqueRule<T extends mongoose.Document = any>(
           // inject field query in filter
           filter.$and.push({ ...fieldQuery });
 
+          // filter defined
+          if (options.filter) {
+            filter.$and.push({ ...options.filter });
+          }
+
           // ignore option
           if (options.ignore) {
-            if (
-              typeof options.ignore === "object" &&
-              options.ignore.constructor === Object
-            ) {
-              filter.$and.push({ ...options.ignore });
+            // field query
+            const ignoreQuery: any = {};
+
+            if (Array.isArray(options.ignore)) {
+              ignoreQuery[options.field ?? field] = { $nin: options.ignore };
             } else {
-              // field query
-              const ignoreQuery: any = {};
-
-              if (Array.isArray(options.ignore)) {
-                ignoreQuery[options.field ?? field] = { $nin: options.ignore };
-              } else {
-                ignoreQuery[options.field ?? field] = { $ne: options.ignore };
-              }
-
-              // inject ignore query
-              filter.$and.push({ ...ignoreQuery });
+              ignoreQuery[options.field ?? field] = { $ne: options.ignore };
             }
+
+            // inject ignore query
+            filter.$and.push({ ...ignoreQuery });
           }
 
           // the element exists
