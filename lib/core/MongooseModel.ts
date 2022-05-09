@@ -1,4 +1,4 @@
-import { Document, model, Schema } from "mongoose";
+import { Document, model, Schema, models } from "mongoose";
 import mongooseAutopopulate from "mongoose-autopopulate";
 import mongooseDelete from "mongoose-delete";
 import OnDelete, { OnDeleteFuncOptions } from "../plugins/onDelete";
@@ -425,7 +425,9 @@ export default function mongooseModel<T extends Document>(
   }
 
   // create model
-  const m = model<T>(params.name, schema, params.collection, params.skipInit);
+  const m =
+    models[params.name] ??
+    model<T>(params.name, schema, params.collection, params.skipInit);
 
   MongoDBContext.syncIndexes.set(m.modelName, {
     enabled: params.syncIndexes,

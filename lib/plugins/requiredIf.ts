@@ -63,7 +63,7 @@ export default async function RequiredIf<T extends Document = any>(
             );
           } else if (typeof rule.validator !== "function") {
             console.error(
-              new Error(`requiredIf -> the \`validator\` must be a bunction`)
+              new Error(`requiredIf -> the \`validator\` must be a function`)
             );
           } else {
             exists.push(rule);

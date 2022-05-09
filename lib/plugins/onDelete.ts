@@ -35,10 +35,7 @@ export default function OnDelete<T extends Document = any>(
   // delete action
   const deleteAction = options.action ?? "restrict";
 
-  /**
-   * Post delete
-   */
-  schema.pre<T>("remove", async function (next) {
+  const middlewareProcess = async function (next) {
     // load dependencies
     const modelNames = await mongoose.connection.modelNames();
     // foreign hosts
@@ -184,5 +181,28 @@ export default function OnDelete<T extends Document = any>(
       // continue
       next();
     }
-  });
+  };
+
+  /**
+   * Pre delete
+   */
+   schema.pre(
+    "remove",
+    { document: true, query: false },
+    middlewareProcess
+  );
+
+  /**
+   * Pre delete
+   */
+  schema.pre(
+    "deleteOne",
+    { document: true, query: true },
+    middlewareProcess
+  );
+
+  /**
+   * deleteMany
+   * https://stackoverflow.com/questions/65853331/mongoose-deletemany-in-pre-hook-how-to-access-all-documents-that-will-be-delete
+   */
 }
