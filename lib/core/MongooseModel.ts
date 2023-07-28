@@ -1,4 +1,4 @@
-import { Document, model, Schema, models } from "mongoose";
+import { Document, model, Schema, models, Model } from "mongoose";
 import mongooseAutopopulate from "mongoose-autopopulate";
 import mongooseDelete from "mongoose-delete";
 import OnDelete, { OnDeleteFuncOptions } from "../plugins/onDelete";
@@ -14,7 +14,7 @@ import RequiredWithoutAll from "../plugins/requiredWithoutAll";
 import MongoDBContext from "./MongoDBContext";
 
 const mongooseLeanVirtuals = require("mongoose-lean-virtuals");
-const mongoosePaginate = require("mongoose-paginate");
+const mongoosePaginate = require('mongoose-paginate-v2');
 const mongooseUniqueValidator = require("mongoose-unique-validator");
 const mongooseAggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
@@ -34,13 +34,6 @@ export type MoongooseModelParams<T extends Document> = {
    * Collection name (optional, induced from model name)
    */
   collection?: string;
-
-  /**
-   * Whether to skip initialization or not
-   *
-   * @default false
-   */
-  skipInit?: boolean;
 
   /**
    * The plugin automatically added when true is Mongoose Paginate
@@ -427,7 +420,7 @@ export default function mongooseModel<T extends Document>(
   // create model
   const m =
     models[params.name] ??
-    model<T>(params.name, schema, params.collection, params.skipInit);
+    model<T>(params.name, schema, params.collection);
 
   MongoDBContext.syncIndexes.set(m.modelName, {
     enabled: params.syncIndexes,

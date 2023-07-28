@@ -16,7 +16,7 @@ export declare type ExistsValidationFuncOptions<T extends Document = any> = {
  * @param options options
  */
 export default function ExistsValidation<T extends Document = any>(
-  schema: Schema<T>,
+  schema: Schema<any>,
   options: ExistsValidationFuncOptions
 ) {
   // model deifinitions

@@ -24,7 +24,7 @@ export declare type PrivacyFuncOptions<T extends Document = any> = {
  * @param options options
  */
 export default function privacy<T extends Document = any>(
-  schema: Schema<T>,
+  schema: Schema<any>,
   options: PrivacyFuncOptions<T>
 ) {
   // model deifinitions

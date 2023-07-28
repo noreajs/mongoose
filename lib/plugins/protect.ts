@@ -26,7 +26,7 @@ export declare type ProtectFuncOptions<T extends Document = any> = {
  * @param options options
  */
 export default function protect<T extends Document = any>(
-  schema: Schema<T>,
+  schema: Schema<any>,
   options: ProtectFuncOptions<T>
 ) {
   // model deifinitions

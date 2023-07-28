@@ -1,8 +1,8 @@
 import { NoreaAppRoutes, Validator } from "@noreajs/core";
 import { Application, Request, Response } from "express";
 import { MongoRule } from "../validation/rules/MongoRule";
-import stepModel, { IStep } from "./models/step.model";
-import taskModel, { ITask } from "./models/task.model";
+import stepModel from "./models/step.model";
+import taskModel from "./models/task.model";
 import userModel from "./models/user.model";
 
 export default new NoreaAppRoutes({
@@ -25,9 +25,9 @@ export default new NoreaAppRoutes({
      * Clean
      */
     app.get("/clean", async (request: Request, response: Response) => {
-      await userModel.remove({});
-      await taskModel.remove({});
-      await stepModel.remove({});
+      await userModel.deleteMany({})
+      await taskModel.deleteMany({});
+      await stepModel.deleteMany({});
       return response.sendStatus(204);
     });
 
@@ -188,5 +188,5 @@ export default new NoreaAppRoutes({
       },
     ]);
   },
-  middlewares(app: Application): void {},
+  middlewares(app: Application): void { },
 });

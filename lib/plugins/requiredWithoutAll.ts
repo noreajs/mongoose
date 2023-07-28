@@ -14,7 +14,7 @@ export declare type RequiredWithoutAllFuncOptions = {
  * @param options options
  */
 export default function RequiredWithoutAll<T extends Document = any>(
-  schema: Schema<T>,
+  schema: Schema<any>,
   options: RequiredWithoutAllFuncOptions
 ) {
   // model deifinitions
@@ -71,7 +71,7 @@ export default function RequiredWithoutAll<T extends Document = any>(
 
   schema.pre("save", function (next) {
     try {
-      const newObj = this.toJSON();
+      const newObj = this.toJSON()
       const error = new mongoose.Error.ValidationError();
 
       for (const field of context.keys()) {

@@ -26,7 +26,7 @@ export declare type OnDeleteFuncOptions<T extends Document = any> = {
  * @param options options
  */
 export default function OnDelete<T extends Document = any>(
-  schema: Schema<T>,
+  schema: Schema<any>,
   options: OnDeleteFuncOptions<T>
 ) {
   // model deifinitions
@@ -64,7 +64,7 @@ export default function OnDelete<T extends Document = any>(
     }
 
     // init error
-    var error: mongoose.NativeError | null = null;
+    var error: NativeError | null = null;
 
     for (const [modelName, key] of foreignHosts) {
       // filters
@@ -85,8 +85,7 @@ export default function OnDelete<T extends Document = any>(
        */
       if (options.log == true) {
         console.log(
-          `onDelete: \`${modelName}\` total from \`${
-            (this.constructor as any).modelName
+          `onDelete: \`${modelName}\` total from \`${(this.constructor as any).modelName
           }\` match`,
           count
         );
@@ -173,7 +172,7 @@ export default function OnDelete<T extends Document = any>(
         if (options.errorCb) {
           options.errorCb(error);
         }
-      } catch (ignoredError) {}
+      } catch (ignoredError) { }
 
       // continue
       next(error);
@@ -183,14 +182,14 @@ export default function OnDelete<T extends Document = any>(
     }
   };
 
-  /**
-   * Pre delete
-   */
-   schema.pre(
-    "remove",
-    { document: true, query: false },
-    middlewareProcess
-  );
+  // /**
+  //  * Pre delete
+  //  */
+  // schema.pre(
+  //   "remove",
+  //   { document: true, query: false },
+  //   middlewareProcess
+  // );
 
   /**
    * Pre delete

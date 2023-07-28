@@ -38,7 +38,7 @@ class MongoDBContext {
       callback?: (err: any) => void;
     }
   >();
-  constructor() {}
+  constructor() { }
   /**
    * Initialize mongodb connection
    *
@@ -74,66 +74,45 @@ class MongoDBContext {
         // trigger connection
         await connect(
           params.connectionUrl,
-          params.options ?? {},
-          async (error) => {
-            /**
-             * Error not defined
-             */
-            if (error !== null && error !== undefined) {
-              if (params.onError) {
-                try {
-                  await params.onError(db, error);
-                } catch (ignoredError) {
-                  // initialization failed
-                  reject(ignoredError);
+          params.options ?? {}
+        );
+
+        /**
+         * Indexes synchronization
+         * --------------------------
+         */
+        try {
+          for (const modelName of MongoDBContext.syncIndexes.keys()) {
+            const options = MongoDBContext.syncIndexes.get(modelName);
+            if (options) {
+              if (options.enabled !== false) {
+                if (options.callback) {
+                  db.models[modelName].syncIndexes(
+                    options.options ?? null,
+                    options.callback
+                  );
+                } else {
+                  db.models[modelName].syncIndexes(options.options);
                 }
               }
-
-              // initialization failed
-              reject(error);
-            } else {
-              /**
-               * Indexes synchronization
-               * --------------------------
-               */
-              try {
-                for (const modelName of MongoDBContext.syncIndexes.keys()) {
-                  const options = MongoDBContext.syncIndexes.get(modelName);
-                  if (options) {
-                    if (options.enabled !== false) {
-                      if (options.callback) {
-                        db.models[modelName].syncIndexes(
-                          options.options ?? null,
-                          options.callback
-                        );
-                      } else {
-                        db.models[modelName].syncIndexes(options.options);
-                      }
-                    }
-                  }
-                }
-              } catch (error) {
-                console.error("Failed to synchronize indexes", error);
-              }
-
-              /**
-               * Connection callback
-               * -------------------------
-               */
-              if (params.onConnect) {
-                await params.onConnect(db);
-              }
-
-              // continue
-              resolve();
             }
           }
-        );
+        } catch (error) {
+          console.error("Failed to synchronize indexes", error);
+        }
+
+        /**
+         * Connection callback
+         * -------------------------
+         */
+        if (params.onConnect) {
+          await params.onConnect(db);
+        }
       } catch (error) {
         if (params.onError) {
           try {
             await params.onError(db, error);
-          } catch (ignoredError) {}
+          } catch (ignoredError) { }
         }
 
         // fail

@@ -14,7 +14,7 @@ export declare type RequiredWithoutFuncOptions = {
  * @param options options
  */
 export default function RequiredWithout<T extends Document = any>(
-  schema: Schema<T>,
+  schema: Schema<any>,
   options: RequiredWithoutFuncOptions
 ) {
   // model deifinitions

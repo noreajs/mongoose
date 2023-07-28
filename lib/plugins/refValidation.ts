@@ -18,7 +18,7 @@ export declare type RefValidationFuncOptions<T extends Document = any> = {
  * @param options options
  */
 export default function RefValidation<T extends Document = any>(
-  schema: Schema<T>,
+  schema: Schema<any>,
   options: RefValidationFuncOptions
 ) {
   // model deifinitions
@@ -44,9 +44,9 @@ export default function RefValidation<T extends Document = any>(
       } else {
         if (
           typeof definition === "object" &&
-          Object.keys(definition).includes("ref")
+          Object.keys(definition as any).includes("ref")
         ) {
-          context.set(key, definition["ref"]);
+          context.set(key, (definition as any)["ref"]);
         }
       }
     }
@@ -83,8 +83,7 @@ export default function RefValidation<T extends Document = any>(
               console.error(error);
               console.log(
                 colors.yellow(
-                  `ACTION REQUIRED: import the \`${ref}\` model in the \`${
-                    (this.constructor as any).modelName
+                  `ACTION REQUIRED: import the \`${ref}\` model in the \`${(this.constructor as any).modelName
                   }\` model and everywhere it is used as reference. => require("model-${ref.toLowerCase()}-path").`
                 )
               );
@@ -104,7 +103,7 @@ export default function RefValidation<T extends Document = any>(
           if (options.errorCb) {
             options.errorCb(error as any);
           }
-        } catch (ignoredError) {}
+        } catch (ignoredError) { }
         next(error);
       } else {
         next();
@@ -114,7 +113,7 @@ export default function RefValidation<T extends Document = any>(
         if (options.errorCb) {
           options.errorCb(error as any);
         }
-      } catch (ignoredError) {}
+      } catch (ignoredError) { }
       next(error as any);
     }
   });

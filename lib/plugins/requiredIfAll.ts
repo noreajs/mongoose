@@ -19,7 +19,7 @@ export declare type RequiredIfAllFuncOptions<T extends Document = any> = {
  * @param options options
  */
 export default async function RequiredIfAll<T extends Document = any>(
-  schema: Schema<T>,
+  schema: Schema<any>,
   options: RequiredIfAllFuncOptions<T>
 ) {
   // model deifinitions
