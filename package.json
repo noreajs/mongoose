@@ -44,7 +44,7 @@
     "@types/express-session": "^1.17.3",
     "@types/mongoose-delete": "^0.5.8",
     "express": "^4.17.1",
-    "mongoose": "^6.1.6"
+    "mongoose": "^7.0.0"
   },
   "peerDependenciesMeta": {
     "@types/express-session": {
