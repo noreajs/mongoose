@@ -1,5 +1,4 @@
 import { Document, Schema, PaginateModel } from "mongoose";
-import {} from "mongoose-paginate-v2"
 import mongooseModel from "../../core/MongooseModel";
 
 require("./user.model");
