@@ -1,4 +1,4 @@
-import { Document, Schema, PaginateModel } from "mongoose";
+import { Document, Schema } from "mongoose";
 import mongooseModel from "../../core/MongooseModel";
 
 require("./user.model");
@@ -61,4 +61,4 @@ export default mongooseModel<ITask>({
   },
   plugins: function (schema: Schema<ITask>) {},
   externalConfig: function (schema) {},
-}) as PaginateModel<ITask>;
+});
